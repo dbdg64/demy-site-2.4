@@ -45,6 +45,26 @@ export default function Products() {
       .catch(() => showToast('فشل الاتصال بالخادم', 'error'))
   }
 
+  function toggleFeatured(p) {
+    api(`/api/products/${p.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name_ar: p.name,
+        category_slug: p.category,
+        slug: p.slug,
+        featured: !p.featured,
+      }),
+    }).then(r => {
+      if (r.ok) {
+        p.featured = !p.featured
+        setProducts([...products])
+        setFiltered([...filtered])
+        showToast(p.featured ? '⭐ تم تمييز المنتج' : 'تم إزالة التميز', 'success')
+      }
+    }).catch(() => showToast('فشل التحديث', 'error'))
+  }
+
   return (
     <>
       <div className="row-between" style={{marginBottom:20,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
@@ -104,7 +124,7 @@ export default function Products() {
                       </div>
                     </td>
                     <td><span className="prod-category">{p.category}</span></td>
-                    <td>{p.featured ? '⭐' : '—'}</td>
+                    <td><button onClick={() => toggleFeatured(p)} style={{background:'none',border:'none',cursor:'pointer',fontSize:'1.2rem',padding:'4px',transition:'transform .15s',transform:p.featured?'scale(1.1)':'scale(0.9)',opacity:p.featured?1:0.3}} title={p.featured?'إزالة التميز':'تمييز المنتج'}>{p.featured ? '⭐' : '☆'}</button></td>
                     <td>
                       <div className="row-actions" style={{display:'flex',alignItems:'center',gap:4}}>
                         <a href={`/products/${p.slug}`} className="btn btn-ghost btn-sm btn-icon" title="عرض التفاصيل"
