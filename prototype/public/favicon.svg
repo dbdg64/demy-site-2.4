@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <!-- Water drop shape -->
+  <path d="M24 4C24 4 10 20.7 10 30C10 37.7 16.3 44 24 44C31.7 44 38 37.7 38 30C38 20.7 24 4 24 4Z" fill="#1E6FE8"/>
+  <!-- Highlight -->
+  <path d="M20 18C20 18 15 26 15 31C15 34 17 37 20 37" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- Inner shine -->
+  <ellipse cx="28" cy="22" rx="4" ry="3" fill="rgba(255,255,255,0.15)"/>
+</svg>

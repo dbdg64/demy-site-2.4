@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ديمى — مواتير المياه</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --primary:#f59e0b;--primary-hover:#d97706;--primary-light:#fef3c7;--primary-subtle:#fffbeb;
+      --accent:#0d9488;--accent-light:#ccfbf1;
+      --bg:#fafaf9;--bg-alt:#f5f5f4;--surface:#fff;--border:#e7e5e4;--border-light:#f0efed;
+      --text:#292524;--text-secondary:#78716c;--text-muted:#a8a29e;--text-inverse:#fafaf9;
+      --shadow-sm:0 1px 2px rgba(41,37,36,0.06);--shadow-md:0 4px 16px rgba(41,37,36,0.08);--shadow-lg:0 8px 32px rgba(41,37,36,0.10);
+      --radius-sm:6px;--radius-md:12px;--radius-lg:20px;
+      --ease-spring:cubic-bezier(0.34,1.56,0.64,1);--ease-smooth:cubic-bezier(0.22,1,0.36,1);--ease-out:cubic-bezier(0,0,0.2,1);
+      --font-body:'Almarai',system-ui,sans-serif;--font-display:'Oswald',system-ui,sans-serif;
+    }
+    body{
+      font-family:var(--font-body);background:var(--bg);color:var(--text);
+      width:100vw;height:100vh;overflow:hidden;
+    }
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(245,158,11,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(13,148,136,0.04) 0%, transparent 50%);
+    }
+
+    .deck{width:100vw;height:100vh;position:relative;z-index:1}
+    .slide{
+      position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:4rem 6rem;
+      opacity:0;transform:translateY(30px);
+      transition:opacity 0.7s var(--ease-smooth),transform 0.7s var(--ease-smooth);
+      pointer-events:none;
+    }
+    .slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+    .slide.exit{opacity:0;transform:translateY(-24px)}
+    .slide-content{position:relative;z-index:1;max-width:880px;width:100%;text-align:center}
+
+    h1{
+      font-family:var(--font-display);font-weight:700;
+      font-size:clamp(2.5rem,5vw,4.5rem);line-height:1.15;margin-bottom:0.75rem;
+    }
+    h1 .gold{color:var(--primary)}
+    h2{
+      font-family:var(--font-display);font-weight:600;
+      font-size:clamp(1.6rem,3vw,2.8rem);line-height:1.2;margin-bottom:0.5rem;
+    }
+    h2 .gold{color:var(--primary)}
+    p{
+      font-size:clamp(1rem,1.6vw,1.35rem);line-height:1.7;color:var(--text-secondary);
+      max-width:680px;margin:0 auto;
+    }
+    p strong{color:var(--text);font-weight:800}
+
+    .tag{
+      display:inline-block;padding:0.3rem 1.1rem;border-radius:100px;
+      background:var(--primary-light);color:var(--primary-hover);
+      font-size:0.82rem;font-weight:800;margin-bottom:1rem;
+    }
+    .brand{
+      display:inline-flex;align-items:center;gap:0.6rem;margin-bottom:1.25rem;
+    }
+    .brand .icon{
+      width:48px;height:48px;border-radius:var(--radius-sm);
+      background:var(--primary);display:grid;place-items:center;
+      font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--text-inverse);
+    }
+    .brand span{
+      font-family:var(--font-display);font-size:1.6rem;font-weight:600;color:var(--text);
+    }
+
+    .compare{display:flex;gap:1.25rem;justify-content:center;margin-top:1.5rem}
+    .compare>div{
+      flex:1;max-width:280px;background:var(--surface);border-radius:var(--radius-md);
+      padding:1.25rem 1.5rem;border:1px solid var(--border);box-shadow:var(--shadow-sm);
+    }
+    .compare .good{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary-light)}
+    .compare .label{font-size:0.8rem;color:var(--text-muted);text-align:center;font-weight:700}
+    .compare .value{font-size:1.15rem;font-weight:800;text-align:center;margin-top:0.3rem}
+    .compare p{font-size:0.82rem;color:var(--text-muted);margin-top:0.5rem;line-height:1.5}
+
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem}
+    .feature{
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);
+      padding:1.5rem 1rem;text-align:center;box-shadow:var(--shadow-sm);
+      transition:border-color 0.3s,box-shadow 0.3s;
+    }
+    .feature:hover{border-color:var(--primary);box-shadow:var(--shadow-md)}
+    .feature .icon{font-size:2rem;margin-bottom:0.5rem}
+    .feature h4{font-size:1rem;font-weight:800;margin-bottom:0.25rem;color:var(--text)}
+    .feature p{font-size:0.82rem;color:var(--text-secondary);line-height:1.5}
+
+    .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.875rem;margin-top:1.5rem}
+    .product-card{
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);
+      padding:1.25rem 0.5rem;text-align:center;box-shadow:var(--shadow-sm);
+      transition:border-color 0.3s,transform 0.3s var(--ease-smooth);
+    }
+    .product-card:hover{border-color:var(--primary);transform:translateY(-3px)}
+    .product-card .hp{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--primary)}
+    .product-card .label{font-size:0.78rem;font-weight:700;color:var(--text-muted);margin-top:0.2rem}
+    .product-card .desc{font-size:0.75rem;color:var(--text-secondary);margin-top:0.4rem;line-height:1.4}
+    .product-card .best{
+      display:inline-block;font-size:0.6rem;font-weight:800;color:var(--text-inverse);
+      background:var(--accent);padding:0.15rem 0.5rem;border-radius:100px;margin-top:0.3rem;
+    }
+
+    .seal{
+      width:90px;height:90px;border-radius:50%;margin:0 auto 0.75rem;
+      background:var(--primary);display:grid;place-items:center;
+      font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--text-inverse);
+      box-shadow:0 0 0 4px var(--primary-light);
+    }
+    .trust-row{display:flex;gap:1.5rem;justify-content:center;margin-top:1rem;flex-wrap:wrap}
+    .trust-row span{display:flex;align-items:center;gap:0.35rem;color:var(--text-secondary);font-size:0.9rem}
+
+    .cta-card{
+      display:inline-flex;align-items:center;gap:0.6rem;
+      background:var(--primary);color:var(--text-inverse);
+      font-family:var(--font-display);font-weight:600;font-size:1.15rem;
+      padding:0.8rem 1.8rem;border-radius:100px;text-decoration:none;
+      margin-top:1.25rem;box-shadow:var(--shadow-md);
+      transition:background 0.3s,transform 0.3s var(--ease-smooth);
+    }
+    .cta-card:hover{background:var(--primary-hover);transform:translateY(-2px)}
+    .contact-row{display:flex;gap:1.5rem;justify-content:center;margin-top:0.75rem;flex-wrap:wrap}
+    .contact-item{display:flex;align-items:center;gap:0.4rem;font-size:0.95rem;color:var(--text-secondary)}
+    .contact-item strong{color:var(--text);font-weight:800}
+
+    .progress{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:0.5rem}
+    .progress .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:var(--border);transition:all 0.4s var(--ease-smooth);
+    }
+    .progress .dot.active{background:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+    .progress .dot.done{background:var(--primary-light)}
+
+    .controls{position:fixed;bottom:1.5rem;right:1.5rem;z-index:10;display:flex;gap:0.4rem}
+    .controls button{
+      background:var(--surface);border:1px solid var(--border);color:var(--text);
+      width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:0.9rem;
+      transition:all 0.2s;box-shadow:var(--shadow-sm);
+    }
+    .controls button:hover{background:var(--primary);color:var(--text-inverse);border-color:var(--primary)}
+
+    @media(max-width:768px){
+      .slide{padding:2rem 1.5rem}
+      .features{grid-template-columns:1fr}
+      .product-grid{grid-template-columns:repeat(2,1fr)}
+      .compare{flex-direction:column;align-items:center}
+      .compare>div{max-width:100%}
+    }
+  </style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- ════ SLIDE 1 — Brand Intro (15s) ════ -->
+  <div class="slide active" data-dur="15">
+    <div class="slide-content">
+      <div class="brand">
+        <div class="icon">د</div>
+        <span>ديمى</span>
+      </div>
+      <div class="tag">مواتير مياه — ٣٠ سنة خبرة</div>
+      <h1>ماتور المياه<br><span class="gold">اللي تقدر تثق فيه</span></h1>
+      <p>بنقدملك ماتور بمواصفات <strong>أوروبية</strong>. ملفات <strong>نحاس خالص</strong>، عمود استانلس، وحماية حرارية. مش مجرد ماتور عادي.</p>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 2 — Copper Coils (15s) ════ -->
+  <div class="slide" data-dur="15">
+    <div class="slide-content">
+      <div class="tag">١٠٠٪ نحاس خالص</div>
+      <h2>الفرق بين ديمى <br>وغيره من البداية</h2>
+      <div class="compare">
+        <div>
+          <div class="label">المواتير العادية</div>
+          <div class="value" style="color:#ef4444">ملفات ألمنيوم</div>
+          <p>بتسخن بسرعة — بتضعف مع الوقت — عمرها أقصر</p>
+        </div>
+        <div class="good">
+          <div class="label">ديمى</div>
+          <div class="value" style="color:var(--primary)">ملفات نحاس ١٠٠٪</div>
+          <p>توصيل كهرباء أفضل — مش بتسخن — بتفضل شغالة سنين</p>
+        </div>
+      </div>
+      <p style="font-size:0.88rem;margin-top:1rem;color:var(--text-muted)">النحاس مش رفاهية — النحاس هو الفرق بين ماتور يعيش وماتور يحرق</p>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 3 — Build Quality (15s) ════ -->
+  <div class="slide" data-dur="15">
+    <div class="slide-content">
+      <div class="tag">جودة التصنيع</div>
+      <h2>ماتور مبني <span class="gold">من الداخل</span></h2>
+      <div class="features">
+        <div class="feature">
+          <div class="icon">🔩</div>
+          <h4>عمود استانلس</h4>
+          <p>مقاوم للصدأ — دوران سلس بدون احتكاك</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🌀</div>
+          <h4>ريشة نحاس</h4>
+          <p>الإمبلر نحاس مش بلاستيك — كفاءة ضخ أعلى</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🌡️</div>
+          <h4>حماية حرارية</h4>
+          <p>ذكية — لو سخن بيفصل أتوماتيك ويرجع شغال</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 4 — Product Range (20s) ════ -->
+  <div class="slide" data-dur="20">
+    <div class="slide-content">
+      <div class="tag">كل المقاسات — منتج أصلي</div>
+      <h2>عندنا الماتور <span class="gold">اللي يناسبك</span></h2>
+      <div class="product-grid">
+        <div class="product-card">
+          <div class="hp">½</div>
+          <div class="label">نصف حصان</div>
+          <div class="desc">شقق — دور أرضي</div>
+        </div>
+        <div class="product-card">
+          <div class="hp">1</div>
+          <div class="label">واحد حصان</div>
+          <div class="desc">دورين — شقة + سطح</div>
+        </div>
+        <div class="product-card" style="border-color:var(--primary);box-shadow:0 0 0 1px var(--primary-light)">
+          <div class="hp">1½</div>
+          <div class="label">واحد ونص</div>
+          <div class="desc">٣ أدوار — الأكثر طلباً</div>
+          <span class="best">الأكثر مبيعاً</span>
+        </div>
+        <div class="product-card">
+          <div class="hp">2+</div>
+          <div class="label">اتنين فأكثر</div>
+          <div class="desc">عمارات — استخدام تجاري</div>
+        </div>
+      </div>
+      <p style="font-size:0.82rem;margin-top:0.75rem;color:var(--text-muted)">كل ماتور بيطلع بقدرته الحقيقية — مش بيفرج مع الاستخدام</p>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 5 — Warranty (15s) ════ -->
+  <div class="slide" data-dur="15">
+    <div class="slide-content">
+      <div class="seal">٢</div>
+      <div class="tag">ضمان سنتين</div>
+      <h2>ثقة مش كلام — <span class="gold">ثقة بضمان</span></h2>
+      <p>كل ماتور من ديمى بضمان <strong>سنتين</strong> ضد عيوب التصنيع. وفريق ديمى معاك بعد البيع — أي استفسار، احنا موجودين.</p>
+      <div class="trust-row">
+        <span>🛡️ ضمان سنتين</span>
+        <span>📞 دعم فني</span>
+        <span>⚡ توصيل سريع</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 6 — CTA (10s) ════ -->
+  <div class="slide" data-dur="10">
+    <div class="slide-content">
+      <div class="brand" style="justify-content:center">
+        <div class="icon">د</div>
+        <span>ديمى</span>
+      </div>
+      <h2>كلمنا النهاردة —<br><span class="gold">احنا موجودين</span></h2>
+      <div class="contact-row">
+        <span class="contact-item">📍 <strong>الأزبكية، القاهرة</strong></span>
+        <span class="contact-item">🕐 <strong>١٠ ص — ١٠ م</strong> يومياً</span>
+      </div>
+      <a href="https://wa.me/201016892956" target="_blank" class="cta-card">
+        💬 ٠١٠١٦٨٩٢٩٥٦
+      </a>
+      <p style="font-size:0.82rem;margin-top:0.75rem;color:var(--text-muted)">٥ شارع المهدى من شارع الجمهورية — الأزبكية</p>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress" id="progress"></div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button id="prevBtn" aria-label="السابق">◀</button>
+    <button id="playBtn" aria-label="تشغيل/إيقاف" style="font-size:0.75rem">⏸</button>
+    <button id="nextBtn" aria-label="التالي">▶</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const slides=document.querySelectorAll('.slide'),total=slides.length
+  let cur=0,playing=true,timer=null
+
+  const prog=document.getElementById('progress')
+  for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot'+(i==0?' active':'');d.dataset.i=i;prog.appendChild(d)}
+  const dots=prog.querySelectorAll('.dot')
+
+  function goTo(i){
+    if(i==cur)return
+    slides[cur].classList.remove('active');slides[cur].classList.add('exit')
+    dots[cur].classList.remove('active');dots[cur].classList.add('done')
+    setTimeout(()=>slides[cur].classList.remove('exit'),700)
+    cur=i
+    slides[cur].classList.add('active');dots[cur].classList.add('active')
+    for(let j=cur+1;j<total;j++)dots[j].classList.remove('done')
+    if(playing)startTimer()
+  }
+  function startTimer(){stopTimer();timer=setTimeout(()=>{if(cur<total-1)goTo(cur+1);else{playing=false;document.getElementById('playBtn').textContent='▶'}},(parseInt(slides[cur].dataset.dur)||15)*1000)}
+  function stopTimer(){if(timer){clearTimeout(timer);timer=null}}
+  document.getElementById('playBtn').onclick=()=>{playing=!playing;document.getElementById('playBtn').textContent=playing?'⏸':'▶';playing?startTimer():stopTimer()}
+  document.getElementById('nextBtn').onclick=()=>{if(cur<total-1){stopTimer();goTo(cur+1)}}
+  document.getElementById('prevBtn').onclick=()=>{if(cur>0){stopTimer();dots[cur].classList.remove('done');goTo(cur-1)}}
+  document.onkeydown=e=>{if(e.key=='ArrowRight')document.getElementById('prevBtn').onclick();else if(e.key=='ArrowLeft')document.getElementById('nextBtn').onclick();else if(e.key==' '||e.key=='Space'){e.preventDefault();document.getElementById('playBtn').onclick()}}
+  startTimer()
+})()
+</script>
+</body>
+</html>
