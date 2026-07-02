@@ -162,30 +162,8 @@
           <h2 class="section__title">فيديوهات توعوية</h2>
           <p class="section__desc">شاهد وتعلم — كل ما تحتاج معرفته عن مواتير المياه</p>
         </div>
-        <div class="video-grid video-grid--2 reveal">
-
-          <div class="video-card">
-            <video controls preload="metadata" poster="/videos/Storyboard_water_pump_horsepower….jpeg">
-              <source src="/videos/AI_presenter_compares_devicesFULL.mp4" type="video/mp4">
-              متصفحك لا يدعم تشغيل الفيديو.
-            </video>
-            <div class="video-card-body">
-              <h3>مقارنة مواتير المياه — أيهما الأنسب لك؟</h3>
-              <p>مقارنة شاملة بين قدرات المواتير المختلفة. تعرف على الفرق بين ٠.٥ حصان و ١ حصان و ٢ حصان وأيهم يناسب احتياجك.</p>
-            </div>
-          </div>
-
-          <div class="video-card">
-            <video controls preload="metadata" poster="/videos/Storyboard_for_Flowmak_awareness….jpeg">
-              <source src="/videos/importance-of-flomak.mp4" type="video/mp4">
-              متصفحك لا يدعم تشغيل الفيديو.
-            </video>
-            <div class="video-card-body">
-              <h3>أهمية الفلوماك — حماية موتور المياه</h3>
-              <p>ليه الفلوماك ضروري لماتور المياه؟ الفلوماك بيحمي الماتور من التشغيل الجاف ويوفر في الكهرباء وبيطوّل عمر الماتور.</p>
-            </div>
-          </div>
-
+        <div class="video-grid video-grid--2 reveal" id="media-container">
+          <p style="grid-column:1/-1;text-align:center;color:var(--color-muted);">جاري تحميل الفيديوهات…</p>
         </div>
       </div>
     </section>
@@ -197,8 +175,8 @@
           <h2 class="section__title">صور توضيحية</h2>
           <p class="section__desc">تصورات بصرية من فيديوهات التوعية</p>
         </div>
-        <div class="storyboard-placeholder reveal">
-          <p>📸 الصور قريباً</p>
+        <div class="storyboard-grid reveal" id="images-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;">
+          <p style="grid-column:1/-1;text-align:center;color:var(--color-muted);">جاري تحميل الصور…</p>
         </div>
       </div>
     </section>
@@ -280,5 +258,47 @@
   <button id="back-to-top" class="back-to-top" aria-label="العودة للأعلى"><i class="fas fa-arrow-up"></i></button>
 
   <script src="/js/main.js"></script>
+  <script>
+    fetch('/api/media')
+      .then(function(r) { return r.json(); })
+      .then(function(items) {
+        var videos = items.filter(function(m) { return m.type === 'video'; });
+        var images = items.filter(function(m) { return m.type === 'image'; });
+
+        var container = document.getElementById('media-container');
+        if (videos.length > 0) {
+          container.innerHTML = '';
+          for (var i = 0; i < videos.length; i++) {
+            var v = videos[i];
+            container.innerHTML += '<div class="video-card">' +
+              '<video controls preload="metadata" width="100%">' +
+                '<source src="' + v.file_path + '" type="video/mp4">' +
+                'متصفحك لا يدعم تشغيل الفيديو.' +
+              '</video>' +
+              '<div class="video-card-body">' +
+                '<h3>' + v.title + '</h3>' +
+                (v.description ? '<p>' + v.description + '</p>' : '') +
+              '</div></div>';
+          }
+        } else {
+          container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--color-muted);">📹 لا توجد فيديوهات بعد</p>';
+        }
+
+        var imgContainer = document.getElementById('images-container');
+        var imgs = images.filter(function(m) { return m.file_path.match(/\.(jpe?g|png|webp)$/i); });
+        if (imgs.length > 0) {
+          imgContainer.innerHTML = '';
+          for (var j = 0; j < imgs.length; j++) {
+            imgContainer.innerHTML += '<div class="storyboard-card" style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;">' +
+              '<img src="' + imgs[j].file_path + '" alt="' + imgs[j].title + '" loading="lazy" style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover;">' +
+              (imgs[j].description ? '<div style="padding:0.75rem 1rem;font-size:0.85rem;color:var(--color-text-secondary);">' + imgs[j].description + '</div>' : '') +
+            '</div>';
+          }
+        }
+      })
+      .catch(function() {
+        document.getElementById('media-container').innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--color-muted);">⚠️ تعذر تحميل الفيديوهات</p>';
+      });
+  </script>
 </body>
 </html>

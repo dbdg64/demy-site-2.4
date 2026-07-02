@@ -6,6 +6,7 @@ const { initDb } = require('./db/init');
 const queries = require('./db/queries');
 const auth = require('./db/auth');
 const crud = require('./db/crud');
+const media = require('./db/media');
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -123,6 +124,28 @@ app.put('/api/products/:id', authMiddleware, (req, res) => {
 
 app.delete('/api/products/:id', authMiddleware, (req, res) => {
   const ok = crud.deleteProduct(Number(req.params.id));
+  if (!ok) return res.status(404).json({ error: 'not found' });
+  res.json({ ok: true });
+});
+
+/* ═══ MEDIA API ═══ */
+app.get('/api/media', (req, res) => {
+  const { section } = req.query;
+  res.json(media.getAllMedia(section || null));
+});
+
+app.post('/api/media', authMiddleware, (req, res) => {
+  const id = media.addMedia(req.body);
+  res.status(201).json(media.getMediaById(id));
+});
+
+app.put('/api/media/:id', authMiddleware, (req, res) => {
+  media.updateMedia(Number(req.params.id), req.body);
+  res.json(media.getMediaById(Number(req.params.id)));
+});
+
+app.delete('/api/media/:id', authMiddleware, (req, res) => {
+  const ok = media.deleteMedia(Number(req.params.id));
   if (!ok) return res.status(404).json({ error: 'not found' });
   res.json({ ok: true });
 });

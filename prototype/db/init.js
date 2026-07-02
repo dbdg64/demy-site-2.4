@@ -60,6 +60,17 @@ function initDb() {
       sort_order INTEGER DEFAULT 0
     );
 
+    CREATE TABLE IF NOT EXISTS media (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT,
+      type TEXT NOT NULL DEFAULT 'image',
+      file_path TEXT NOT NULL,
+      section TEXT DEFAULT 'awareness',
+      sort_order INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE NOT NULL,
@@ -208,6 +219,15 @@ function initDb() {
       console.log('✅ Default users seeded');
     }
   });
+
+  // Seed media (videos/images)
+  const mediaCount = db.prepare('SELECT COUNT(*) as c FROM media').get().c;
+  if (mediaCount === 0) {
+    const insMedia = db.prepare('INSERT INTO media (title, description, type, file_path, section, sort_order) VALUES (?, ?, ?, ?, ?, ?)');
+    insMedia.run('مقارنة مواتير المياه', 'مقارنة شاملة بين قدرات المواتير المختلفة', 'video', '/videos/AI_presenter_compares_devicesFULL.mp4', 'awareness', 1);
+    insMedia.run('أهمية الفلوماك', 'ليه الفلوماك ضروري لماتور المياه', 'video', '/videos/importance-of-flomak.mp4', 'awareness', 2);
+    console.log('✅ Media seeded');
+  }
 
   seed();
   console.log('✅ DB seeded: ' + db.prepare('SELECT COUNT(*) as c FROM products').get().c + ' products');
