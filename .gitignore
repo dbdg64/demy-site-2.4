@@ -11,7 +11,5 @@ waterpumper/
 waterpumper-uncompleted/
 *.tar.gz
 .pi/_addyosmani-skills/
-prototype/public/videos/*.mp4
-prototype/public/videos/*.jpeg
 prototype/public/video/
 dashboard/dist/
