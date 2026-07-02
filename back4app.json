@@ -1,0 +1,10 @@
+{
+  "name": "demy-store",
+  "description": "WaterPumper store — Express API + static files + SQLite",
+  "type": "web",
+  "buildCommand": "cd prototype && npm install",
+  "startCommand": "cd prototype && node server.js",
+  "env": {
+    "PORT": "10000"
+  }
+}
