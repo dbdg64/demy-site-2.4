@@ -1,0 +1,17 @@
+node_modules/
+*.db
+*.db-shm
+*.db-wal
+.env
+dist/
+.DS_Store
+*.log
+wordpress-local/
+waterpumper/
+waterpumper-uncompleted/
+*.tar.gz
+.pi/_addyosmani-skills/
+prototype/public/videos/*.mp4
+prototype/public/videos/*.jpeg
+*.tar.gz
+prototype/public/video/

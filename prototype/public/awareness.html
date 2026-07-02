@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نصائح العناية — ديمى لمواتير المياه</title>
+  <meta name="description" content="نصائح وحقائق مهمة للحفاظ على موتور المياه وإطالة عمره — فيديوهات توعوية من ديمى." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/home.css" />
+  <style>
+    .awareness-hero {
+      background: var(--color-bg);
+      padding: 4rem 1.5rem;
+      text-align: center;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .awareness-hero h1 {
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .awareness-hero p {
+      color: var(--color-text-secondary);
+      font-size: 1.05rem;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    .video-grid {
+      display: grid;
+      gap: 2rem;
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+    .video-grid--2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .video-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.3s var(--ease-smooth);
+    }
+    .video-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+    .video-card video {
+      width: 100%;
+      display: block;
+      background: #000;
+    }
+    .video-card-body {
+      padding: 1.25rem 1.5rem;
+    }
+    .video-card-body h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+    .video-card-body p {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+    .tip-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      transition: all 0.3s var(--ease-smooth);
+    }
+    .tip-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-md);
+    }
+    .tip-icon {
+      width: 44px; height: 44px;
+      border-radius: var(--radius);
+      background: var(--color-primary-subtle);
+      display: grid;
+      place-items: center;
+      font-size: 1.25rem;
+      color: var(--color-primary);
+      margin-bottom: 1rem;
+    }
+    .tip-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .tip-card p {
+      color: var(--color-text-secondary);
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+
+    .storyboard-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-md);
+      color: var(--color-text-muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .video-grid--2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar__container">
+      <a href="/" class="navbar__logo">
+        <span class="navbar__logo-icon">د</span>
+        ديمى
+      </a>
+      <button class="navbar__toggle" aria-label="القائمة" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="navbar__links">
+        <li><a href="/">الرئيسية</a></li>
+        <li><a href="/products">المنتجات</a></li>
+        <li><a href="/about">من نحن</a></li>
+        <li><a href="/awareness" aria-current="page">نصائح وفيديوهات</a></li>
+        <li><a href="/contact">اتصل بنا</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="awareness-hero reveal">
+      <h1>🎥 نصائح وفيديوهات توعوية</h1>
+      <p>معلومات وحقائق مهمة عن مواتير المياه — من اختيار القدرة المناسبة لتركيب الفلوماك والعناية الدورية</p>
+    </section>
+
+    <!-- Videos -->
+    <section class="section" id="videos">
+      <div class="container">
+        <div class="section__header reveal">
+          <h2 class="section__title">فيديوهات توعوية</h2>
+          <p class="section__desc">شاهد وتعلم — كل ما تحتاج معرفته عن مواتير المياه</p>
+        </div>
+        <div class="video-grid video-grid--2 reveal">
+
+          <div class="video-card">
+            <video controls preload="metadata" poster="/videos/Storyboard_water_pump_horsepower….jpeg">
+              <source src="/videos/AI_presenter_compares_devicesFULL.mp4" type="video/mp4">
+              متصفحك لا يدعم تشغيل الفيديو.
+            </video>
+            <div class="video-card-body">
+              <h3>مقارنة مواتير المياه — أيهما الأنسب لك؟</h3>
+              <p>مقارنة شاملة بين قدرات المواتير المختلفة. تعرف على الفرق بين ٠.٥ حصان و ١ حصان و ٢ حصان وأيهم يناسب احتياجك.</p>
+            </div>
+          </div>
+
+          <div class="video-card">
+            <video controls preload="metadata" poster="/videos/Storyboard_for_Flowmak_awareness….jpeg">
+              <source src="/videos/importance-of-flomak.mp4" type="video/mp4">
+              متصفحك لا يدعم تشغيل الفيديو.
+            </video>
+            <div class="video-card-body">
+              <h3>أهمية الفلوماك — حماية موتور المياه</h3>
+              <p>ليه الفلوماك ضروري لماتور المياه؟ الفلوماك بيحمي الماتور من التشغيل الجاف ويوفر في الكهرباء وبيطوّل عمر الماتور.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Storyboards -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section__header reveal">
+          <h2 class="section__title">صور توضيحية</h2>
+          <p class="section__desc">تصورات بصرية من فيديوهات التوعية</p>
+        </div>
+        <div class="storyboard-placeholder reveal">
+          <p>📸 الصور قريباً</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tips -->
+    <section class="section" id="tips">
+      <div class="container">
+        <div class="section__header reveal">
+          <h2 class="section__title">نصائح العناية بالموتور</h2>
+          <p class="section__desc">إزاي تحافظ على ماتور المياه ويطول عمره</p>
+        </div>
+        <div class="tips-grid reveal">
+          <div class="tip-card">
+            <div class="tip-icon"><i class="fas fa-water"></i></div>
+            <h3>نظف الفلتر شهرياً</h3>
+            <p>افصل الموتور قبل تنظيف الفلتر. انقعه في ماء نظيف لمدة ١٠ دقائق ونظفه بفرشاة ناعمة. الفلتر النظيف = أداء أفضل وعمر أطول.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon"><i class="fas fa-fire"></i></div>
+            <h3>تجنب التشغيل الجاف</h3>
+            <p>التشغيل بدون ماء هو السبب الأول لحرق المواتير. ركب مستشعر حماية من الجفاف وتأكد من وجود ماء كافٍ قبل التشغيل.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon"><i class="fas fa-bolt"></i></div>
+            <h3>افحص الجهد الكهربائي</h3>
+            <p>استخدم جهاز قياس الجهد. الجهد المنخفض أو المرتفع يتلف الموتور. يُفضل تركيب وحدة حماية من تقلبات الجهد.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon"><i class="fas fa-snowflake"></i></div>
+            <h3>التخزين في الشتاء</h3>
+            <p>إذا مش هتستخدم الموتور لفترة، افرغه من الماء تماماً. نظفه وجففه وخزّنه في مكان جاف. شغّله دقيقتين كل أسبوعين.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon"><i class="fas fa-shield-alt"></i></div>
+            <h3>ركب فلوماك</h3>
+            <p>الفلوماك بينظم ضغط المية بيحمي الماتور من التشغيل الجاف وبيوفر في فاتورة الكهرباء. استثمار بسيط بحماية كبيرة.</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon"><i class="fas fa-tools"></i></div>
+            <h3>صيانة دورية</h3>
+            <p>اطلع على الماتور كل فترة. تأكد من نظافة الريشة، عدم وجود تسريب، وسلامة الأسلاك. الصيانة الدورية أسهل وأرخص من التصليح.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-banner reveal">
+      <div class="container">
+        <h2>عندك سؤال عن الماتور؟</h2>
+        <p>كلمنا على واتساب: 01016892956. فريق ديمى هيجاوب على كل أسئلتك.</p>
+        <a href="https://wa.me/201016892956" target="_blank" class="btn btn--primary">
+          <i class="fab fa-whatsapp"></i> تحدث معنا
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer__container">
+      <div class="footer__brand">
+        <div class="footer__logo">ديمى</div>
+        <p class="footer__tagline">مواتير مياه مستوردة. نحاس ١٠٠٪. ٣٠ سنة خبرة.</p>
+      </div>
+      <div class="footer__info">
+        <a href="tel:+201016892956"><i class="fas fa-phone"></i> 01016892956</a>
+        <a href="mailto:info@michelledemy.com"><i class="fas fa-envelope"></i> info@michelledemy.com</a>
+        <a href="https://wa.me/201016892956" target="_blank"><i class="fab fa-whatsapp"></i> واتساب</a>
+      </div>
+      <div class="footer__actions">
+        <a href="https://wa.me/201016892956" target="_blank" class="btn btn--primary btn--sm"><i class="fab fa-whatsapp"></i> واتساب</a>
+        <a href="tel:+201016892956" class="btn btn--outline btn--sm"><i class="fas fa-phone"></i> اتصل بنا</a>
+      </div>
+    </div>
+    <p class="footer__copyright">© شركة ديمى لمواتير المياه، ٢٠٢٦</p>
+  </footer>
+
+  <button id="back-to-top" class="back-to-top" aria-label="العودة للأعلى"><i class="fas fa-arrow-up"></i></button>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
