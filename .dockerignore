@@ -1,0 +1,18 @@
+# Ignore everything except what we need
+.git
+.gitignore
+*.md
+docs/
+waterpumper/
+waterpumper-uncompleted/
+dashboard/
+.pi/
+.impeccable/
+.mcp.json
+Dockerfile
+back4app.json
+PRODUCT.md
+DESIGN.md
+node_modules/
+*.db
+*.tar.gz
