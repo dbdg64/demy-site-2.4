@@ -45,6 +45,9 @@ function adminMiddleware(req, res, next) {
   next();
 }
 
+/* ═══ PING ═══ */
+app.get('/api/ping', (req, res) => res.json({ ok: true, time: Date.now() }));
+
 /* ═══ AUTH API ═══ */
 app.post('/api/auth/login', async (req, res) => {
   try {
