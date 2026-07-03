@@ -302,14 +302,24 @@ if (!isVercel) {
 // Vercel: export the Express app
 module.exports = app;
 
-// Vercel cold-start: init DB once
+// Vercel cold-start: init DB once before first request
 if (isVercel) {
-  let dbInitialized = false;
+  let dbReady = false;
+  let dbInitPromise = null;
   const originalHandler = app.handle.bind(app);
   app.handle = (req, res, next) => {
-    if (!dbInitialized) {
-      dbInitialized = true;
-      initDb().catch(err => console.error('❌ DB init:', err));
+    if (!dbReady) {
+      if (!dbInitPromise) {
+        dbInitPromise = initDb().then(() => {
+          dbReady = true;
+        }).catch(err => {
+          console.error('❌ DB init failed:', err);
+          dbInitPromise = null;
+        });
+      }
+      return dbInitPromise.then(() => originalHandler(req, res, next)).catch(() => {
+        res.status(500).json({ error: 'حدث خطأ في الخادم' });
+      });
     }
     originalHandler(req, res, next);
   };
