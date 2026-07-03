@@ -11,9 +11,6 @@ Thumbs.db
 .elasticbeanstalk
 .pi
 .claude
-public/videos
 public/video
 public/assets
 *.tar.gz
-*.mp4
-*.mp3
