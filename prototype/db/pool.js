@@ -1,4 +1,4 @@
-// Database connection pool — standard pg for Supabase/any Postgres
+// Database connection pool — standard pg for Supabase/Neon/any Postgres
 const { Pool } = require('pg');
 const dns = require('dns');
 const { URL } = require('url');
@@ -17,6 +17,12 @@ function resolveIPv4(hostname) {
       else resolve(address);
     });
   });
+}
+
+function hasSslInQuery(url) {
+  const params = new URLSearchParams(url.search);
+  const ssl = params.get('sslmode');
+  return ssl && ssl !== 'disable';
 }
 
 async function getPool() {
@@ -38,21 +44,22 @@ async function getPool() {
     if (isLocal()) {
       try {
         const url = new URL(connectionString);
-        if (!resolving) {
-          resolving = resolveIPv4(url.hostname);
-        }
+        if (!resolving) resolving = resolveIPv4(url.hostname);
         const ipv4 = await resolving;
         opts.host = ipv4;
         opts.port = parseInt(url.port) || 5432;
         opts.user = url.username;
         opts.password = decodeURIComponent(url.password);
         opts.database = url.pathname.slice(1);
+        if (hasSslInQuery(url)) opts.ssl = { rejectUnauthorized: false };
         resolving = null;
       } catch {
         opts.connectionString = connectionString;
+        opts.ssl = { rejectUnauthorized: false };
       }
     } else {
       opts.connectionString = connectionString;
+      opts.ssl = { rejectUnauthorized: false };
     }
 
     pool = new Pool(opts);
