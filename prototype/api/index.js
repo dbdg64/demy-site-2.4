@@ -15,7 +15,22 @@ const isVercel = !!process.env.VERCEL;
 
 // Static files — Vercel serves from project root, Express serves from ../public/
 const publicDir = path.resolve(__dirname, '..', 'public');
-app.use(express.static(publicDir));
+const oneYear = 365 * 24 * 60 * 60 * 1000;
+const oneMonth = 30 * 24 * 60 * 60 * 1000;
+app.use(express.static(publicDir, {
+  maxAge: 0,
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('.css') || filePath.endsWith('.js')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (filePath.endsWith('.webp') || filePath.endsWith('.jpg') || filePath.endsWith('.png')) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000');
+    } else if (filePath.endsWith('.mp4') || filePath.endsWith('.mp3')) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000');
+    } else if (filePath.endsWith('.xml') || filePath.endsWith('.txt')) {
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+  }
+}));
 
 // Body parsing
 app.use(express.json({ limit: '5mb' }));

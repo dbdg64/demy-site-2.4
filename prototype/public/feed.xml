@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+<channel>
+  <title>ديمى لمواتير المياه</title>
+  <atom:link href="https://demy-site-2-4.vercel.app/feed.xml" rel="self" type="application/rss+xml" />
+  <link>https://demy-site-2-4.vercel.app/</link>
+  <description>مواتير مياه مستوردة — نحاس ١٠٠٪، عمود استانلس، حماية حرارية. ٣٠ سنة خبرة في السوق المصري.</description>
+  <lastBuildDate>2026-07-03 22:00:00 +0200</lastBuildDate>
+  <language>ar</language>
+  <sy:updatePeriod>weekly</sy:updatePeriod>
+  <sy:updateFrequency>1</sy:updateFrequency>
+
+  <item>
+    <title>جميع منتجات ديمى لمواتير المياه</title>
+    <link>https://demy-site-2-4.vercel.app/products</link>
+    <description>تصفح جميع منتجات ديمى من مواتير المياه والغواطس والفلوماك وقطع الغيار. نحاس ١٠٠٪، ضمان سنة.</description>
+    <pubDate>2026-07-03 22:00:00 +0200</pubDate>
+    <guid>https://demy-site-2-4.vercel.app/products</guid>
+  </item>
+
+  <item>
+    <title>نصائح وفيديوهات العناية بمواتير المياه</title>
+    <link>https://demy-site-2-4.vercel.app/awareness</link>
+    <description>نصائح وحقائق مهمة للحفاظ على موتور المياه وإطالة عمره — فيديوهات مفيدة من ديمى.</description>
+    <pubDate>2026-07-03 22:00:00 +0200</pubDate>
+    <guid>https://demy-site-2-4.vercel.app/awareness</guid>
+  </item>
+
+  <item>
+    <title>من نحن — شركة ديمى لمواتير المياه</title>
+    <link>https://demy-site-2-4.vercel.app/about</link>
+    <description>تعرف على شركة ديمى لمواتير المياه. ٣٠ سنة خبرة في بيع مواتير المياه المستوردة.</description>
+    <pubDate>2026-07-03 22:00:00 +0200</pubDate>
+    <guid>https://demy-site-2-4.vercel.app/about</guid>
+  </item>
+
+  <item>
+    <title>اتصل بنا — ديمى لمواتير المياه</title>
+    <link>https://demy-site-2-4.vercel.app/contact</link>
+    <description>تواصل مع شركة ديمى لمواتير المياه. واتساب، تليفون، أو زورنا في الأزبكية.</description>
+    <pubDate>2026-07-03 22:00:00 +0200</pubDate>
+    <guid>https://demy-site-2-4.vercel.app/contact</guid>
+  </item>
+</channel>
+</rss>
