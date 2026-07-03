@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://demy-site-2-4.vercel.app/sitemap.xml
