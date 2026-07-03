@@ -1,0 +1,16 @@
+node_modules
+dashboard
+.git
+.vercel
+.env.local
+*.db
+*.sqlite
+*.log
+.DS_Store
+Thumbs.db
+.elasticbeanstalk
+.pi
+.claude
+public/videos
+public/video
+public/assets
