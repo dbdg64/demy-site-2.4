@@ -14,3 +14,6 @@ Thumbs.db
 public/videos
 public/video
 public/assets
+*.tar.gz
+*.mp4
+*.mp3
