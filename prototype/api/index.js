@@ -48,6 +48,42 @@ function adminMiddleware(req, res, next) {
 /* ═══ PING ═══ */
 app.get('/api/ping', (req, res) => res.json({ ok: true, time: Date.now() }));
 
+/* ═══ DB STATUS ═══ */
+app.get('/api/db-status', async (req, res) => {
+  try {
+    const dns = require('dns');
+    const start = Date.now();
+
+    const ping = await require('../db/pool').query('SELECT 1 AS ok');
+    const pingMs = Date.now() - start;
+
+    const counts = await Promise.all([
+      require('../db/pool').query("SELECT COUNT(*)::int AS c FROM products"),
+      require('../db/pool').query("SELECT COUNT(*)::int AS c FROM categories"),
+      require('../db/pool').query("SELECT COUNT(*)::int AS c FROM media"),
+      require('../db/pool').query("SELECT COUNT(*)::int AS c FROM users"),
+    ]);
+
+    res.json({
+      ok: true,
+      ping_ms: pingMs,
+      counts: {
+        products: counts[0].rows[0].c,
+        categories: counts[1].rows[0].c,
+        media: counts[2].rows[0].c,
+        users: counts[3].rows[0].c,
+      },
+      db_url_host: (process.env.DATABASE_URL || '').replace(/\/\/.*@/, '//***@'),
+    });
+  } catch (err) {
+    res.status(500).json({
+      ok: false,
+      error: err.message,
+      db_url_host: (process.env.DATABASE_URL || '').replace(/\/\/.*@/, '//***@'),
+    });
+  }
+});
+
 /* ═══ AUTH API ═══ */
 app.post('/api/auth/login', async (req, res) => {
   try {
