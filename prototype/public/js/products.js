@@ -88,7 +88,7 @@
         galleryHtml += '</div>';
       }
 
-      var detailUrl = 'product.html?slug=' + product.slug;
+      var detailUrl = '/product.html?slug=' + product.slug;
 
       var isCompared = compareItems.indexOf(product.name) > -1;
 
@@ -285,7 +285,7 @@
     if (e.target.closest('a')) return;
     if (e.target.closest('details')) return;
     e.preventDefault();
-    window.location.href = 'product.html?slug=' + card.dataset.slug;
+    window.location.href = '/product.html?slug=' + card.dataset.slug;
   });
 
   /* Gallery thumbnail click (delegated) */
