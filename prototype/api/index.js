@@ -285,66 +285,65 @@ app.delete('/api/products/:id', authMiddleware, async (req, res) => {
   }
 });
 
-/* ═══ Serve uploaded files (from disk or /tmp on Vercel) ═══ */
-app.use('/uploads', (req, res, next) => {
-  // If running on Vercel, /tmp/uploads is the dir — serve from there
-  const filePath = path.join(UPLOAD_DIR, req.path);
-  if (fs.existsSync(filePath)) {
-    return res.sendFile(filePath);
+/* ═══ Vercel Blob (production) or local disk storage ═══ */
+async function storeFile(buffer, originalname, mimetype) {
+  if (isVercel) {
+    const { put } = require('@vercel/blob');
+    const ext = path.extname(originalname) || '.bin';
+    const name = crypto.randomBytes(12).toString('hex') + ext;
+    const blob = await put(name, buffer, {
+      contentType: mimetype,
+      access: 'public',
+    });
+    return { url: blob.url, filename: name, size: buffer.length, mimetype };
   }
-  // Fall back to the public dir for pre-existing assets
-  next();
-});
+
+  // Local: save to disk
+  if (!uploadDirReady) throw new Error('Upload directory not available');
+  const ext = path.extname(originalname) || '.bin';
+  const name = crypto.randomBytes(12).toString('hex') + ext;
+  const dest = path.join(UPLOAD_DIR, name);
+  fs.writeFileSync(dest, buffer);
+  return { url: '/uploads/' + name, filename: name, size: buffer.length, mimetype };
+}
+
+/* ═══ Serve uploaded files (local dev only; Vercel Blob serves itself) ═══ */
+if (!isVercel) {
+  app.use('/uploads', (req, res, next) => {
+    const filePath = path.join(UPLOAD_DIR, req.path);
+    if (fs.existsSync(filePath)) return res.sendFile(filePath);
+    next();
+  });
+}
 
 /* ═══ FILE UPLOAD ═══ */
-app.post('/api/upload', authMiddleware, upload.single('file'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'لم يتم رفع ملف' });
+app.post('/api/upload', authMiddleware, upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'لم يتم رفع ملف' });
 
-  // Memory storage fallback — save to disk if possible
-  if (req.file.buffer && uploadDirReady) {
-    const ext = path.extname(req.file.originalname) || '.bin';
-    const name = crypto.randomBytes(12).toString('hex') + ext;
-    const dest = path.join(UPLOAD_DIR, name);
-    try {
-      fs.writeFileSync(dest, req.file.buffer);
-      return res.json({ url: '/uploads/' + name, filename: name, size: req.file.size, mimetype: req.file.mimetype });
-    } catch (_e) { /* fall through to error */ }
+    const buf = req.file.buffer || fs.readFileSync(req.file.path);
+    const result = await storeFile(buf, req.file.originalname, req.file.mimetype);
+    res.json(result);
+  } catch (err) {
+    console.error('[UPLOAD] error:', err);
+    res.status(500).json({ error: 'فشل رفع الملف' });
   }
-
-  if (req.file.filename) {
-    return res.json({ url: '/uploads/' + req.file.filename, filename: req.file.filename, size: req.file.size, mimetype: req.file.mimetype });
-  }
-
-  res.status(500).json({ error: 'تعذر حفظ الملف. يرجى تكوين وحدة تخزين سحابية (مثل Vercel Blob).' });
 });
 
-app.post('/api/upload/multiple', authMiddleware, upload.array('files', 10), (req, res) => {
-  if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'لم يتم رفع ملفات' });
+app.post('/api/upload/multiple', authMiddleware, upload.array('files', 10), async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'لم يتم رفع ملفات' });
 
-  const results = [];
-  for (const f of req.files) {
-    let url = '';
-    let filename = '';
+    const results = await Promise.all(req.files.map(f => {
+      const buf = f.buffer || fs.readFileSync(f.path);
+      return storeFile(buf, f.originalname, f.mimetype);
+    }));
 
-    if (f.filename) {
-      // Disk storage
-      filename = f.filename;
-      url = '/uploads/' + f.filename;
-    } else if (f.buffer && uploadDirReady) {
-      // Memory storage — save to disk
-      const ext = path.extname(f.originalname) || '.bin';
-      filename = crypto.randomBytes(12).toString('hex') + ext;
-      const dest = path.join(UPLOAD_DIR, filename);
-      try {
-        fs.writeFileSync(dest, f.buffer);
-        url = '/uploads/' + filename;
-      } catch (_e) { /* skip failed file */ }
-    }
-
-    if (url) results.push({ url, filename, size: f.size, mimetype: f.mimetype });
+    res.json({ files: results });
+  } catch (err) {
+    console.error('[UPLOAD MULTIPLE] error:', err);
+    res.status(500).json({ error: 'فشل رفع الملفات' });
   }
-
-  res.json({ files: results });
 });
 
 /* ═══ PRODUCT IMAGES ═══ */
