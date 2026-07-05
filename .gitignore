@@ -13,3 +13,8 @@ waterpumper-uncompleted/
 .pi/_addyosmani-skills/
 prototype/public/video/
 dashboard/dist/
+.vercel
+.env*
+.venv/
+tts_output_*.wav
+__pycache__/

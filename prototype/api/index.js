@@ -315,6 +315,7 @@ const fileMap = {
   '/about': 'about.html',
   '/contact': 'contact.html',
   '/awareness': 'awareness.html',
+  '/product': 'product.html',
 };
 
 // Admin SPA — serve index.html for all /admin/* paths (client-side routing)

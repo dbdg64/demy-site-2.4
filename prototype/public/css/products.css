@@ -275,6 +275,40 @@
   font-size: 0.75rem;
 }
 
+.product__body h3 a {
+  color: inherit;
+  transition: color 0.2s;
+}
+
+.product__body h3 a:hover {
+  color: var(--color-primary);
+}
+
+.product__image-wrap a {
+  display: block;
+}
+
+.product__card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.product__card-actions .btn--sm {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.product__card-actions .compare__toggle {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.7rem;
+}
+
 .product__body .btn--sm {
   align-self: flex-start;
   margin-top: auto;

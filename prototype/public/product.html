@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="google-site-verification" content="google325dfa5c64d153d7.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المنتج — ديمى لمواتير المياه</title>
+  <meta property="og:title" content="منتج — ديمى لمواتير المياه" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ar_EG" />
+  <meta property="og:site_name" content="ديمى لمواتير المياه" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://demy-site-2-4.vercel.app/product" />
+  <meta property="og:url" content="https://demy-site-2-4.vercel.app/product" />
+  <meta name="description" content="تفاصيل المنتج من ديمى لمواتير المياه." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/product-detail.css" />
+  <script type="application/ld+json" id="ld-json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "",
+    "brand": { "@type": "Brand", "name": "ديمى" },
+    "url": "https://demy-site-2-4.vercel.app/product"
+  }
+  </script>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar__container">
+      <a href="/" class="navbar__logo">
+        <span class="navbar__logo-icon">د</span>
+        ديمى
+      </a>
+      <button class="navbar__toggle" aria-label="القائمة" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="navbar__links">
+        <li><a href="/">الرئيسية</a></li>
+        <li><a href="/products">المنتجات</a></li>
+        <li><a href="/about">من نحن</a></li>
+        <li><a href="/awareness">🎥 نصائح وفيديوهات</a></li>
+        <li><a href="/contact">اتصل بنا</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Loading state -->
+    <div class="loading-state" id="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>جاري تحميل المنتج...</p>
+    </div>
+
+    <!-- Error state -->
+    <div class="error-state" id="error-state" style="display:none">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h2>المنتج غير موجود</h2>
+      <p id="error-message">لم يتم العثور على المنتج المطلوب.</p>
+      <a href="/products" class="btn btn--primary"><i class="fas fa-arrow-right"></i> العودة للمنتجات</a>
+    </div>
+
+    <!-- Product detail -->
+    <section class="product-detail section" id="product-detail" style="display:none">
+      <div class="container">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="مسار الصفحة">
+          <a href="/"><i class="fas fa-home"></i> الرئيسية</a>
+          <span class="breadcrumb__sep">/</span>
+          <a href="/products">المنتجات</a>
+          <span class="breadcrumb__sep">/</span>
+          <span class="breadcrumb__current" id="breadcrumb-name"></span>
+        </nav>
+
+        <div class="product-detail__layout">
+
+          <!-- Right column — Images -->
+          <div class="product-detail__gallery">
+            <div class="product-detail__main-image" id="main-image-wrap">
+              <span class="badge product__badge" id="detail-badge" style="display:none">الأكثر مبيعاً</span>
+              <img id="main-image" src="" alt="" />
+            </div>
+            <div class="product-detail__thumbs" id="thumbnails"></div>
+          </div>
+
+          <!-- Left column — Info -->
+          <div class="product-detail__info">
+            <h1 class="product-detail__title" id="detail-title"></h1>
+
+            <div class="product-detail__category" id="detail-category"></div>
+
+            <!-- Specs table -->
+            <div class="product-detail__specs">
+              <h3><i class="fas fa-list"></i> المواصفات</h3>
+              <table class="specs-table" id="specs-table"></table>
+            </div>
+
+            <!-- Features list -->
+            <div class="product-detail__features" id="features-section" style="display:none">
+              <h3><i class="fas fa-check-circle"></i> المميزات</h3>
+              <ul id="features-list"></ul>
+            </div>
+
+            <!-- CTA -->
+            <div class="product-detail__cta">
+              <a id="whatsapp-btn" href="" target="_blank" class="btn btn--primary btn--lg">
+                <i class="fab fa-whatsapp"></i> استعلم عن السعر عبر واتساب
+              </a>
+              <a href="/products" class="btn btn--outline btn--lg">
+                <i class="fas fa-arrow-right"></i> جميع المنتجات
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__container">
+      <div class="footer__brand">
+        <div class="footer__logo">ديمى</div>
+        <p class="footer__tagline">مواتير مياه مستوردة. نحاس ١٠٠٪. ٣٠ سنة خبرة.</p>
+      </div>
+      <div class="footer__info">
+        <a href="tel:+201016892956"><i class="fas fa-phone"></i> 01016892956</a>
+        <a href="mailto:info@michelledemy.com"><i class="fas fa-envelope"></i> info@michelledemy.com</a>
+        <a href="https://wa.me/201016892956" target="_blank"><i class="fab fa-whatsapp"></i> واتساب</a>
+      </div>
+      <div class="footer__social">
+        <a href="https://www.facebook.com/micheledemy/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="https://www.youtube.com/@mechelledemy" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://wa.me/201016892956" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+      </div>
+      <div class="footer__actions">
+        <a href="https://wa.me/201016892956" target="_blank" class="btn btn--primary btn--sm"><i class="fab fa-whatsapp"></i> واتساب</a>
+        <a href="tel:+201016892956" class="btn btn--outline btn--sm"><i class="fas fa-phone"></i> اتصل بنا</a>
+      </div>
+    </div>
+    <p class="footer__copyright">© شركة ديمى لمواتير المياه، ٢٠٢٦.</p>
+  </footer>
+
+  <button id="back-to-top" class="back-to-top" aria-label="العودة للأعلى"><i class="fas fa-arrow-up"></i></button>
+
+  <script src="/js/main.js"></script>
+  <script src="/data.js"></script>
+  <script src="/js/product-detail.js"></script>
+</body>
+</html>

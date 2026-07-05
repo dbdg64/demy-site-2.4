@@ -1,6 +1,5 @@
 /* ════════════════════════════════════════
-   ديمى — Products page JS
-   Fetches from REST API, filter, search, compare
+   ديمى — Products page JS (static, GitHub Pages)
    ════════════════════════════════════════ */
 
 (function () {
@@ -29,26 +28,18 @@
 
   /* ── Fetch products from API ── */
   function loadProducts() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/products', true);
-    xhr.onload = function() {
-      if (xhr.status === 200) {
-        allProducts = JSON.parse(xhr.responseText);
-        // Read URL param for initial filter
-        var urlParams = new URLSearchParams(window.location.search);
-        var catParam = urlParams.get('cat');
-        if (catParam) {
-          var targetBtn = document.querySelector('.filter__btn[data-filter="' + catParam + '"]');
-          if (targetBtn) {
-            document.querySelectorAll('.filter__btn').forEach(function(b) { b.classList.remove('active'); });
-            targetBtn.classList.add('active');
-            currentFilter = catParam;
-          }
-        }
-        renderProducts(allProducts);
+    allProducts = typeof STATIC_PRODUCTS !== 'undefined' ? STATIC_PRODUCTS : [];
+    var urlParams = new URLSearchParams(window.location.search);
+    var catParam = urlParams.get('cat');
+    if (catParam) {
+      var targetBtn = document.querySelector('.filter__btn[data-filter="' + catParam + '"]');
+      if (targetBtn) {
+        document.querySelectorAll('.filter__btn').forEach(function(b) { b.classList.remove('active'); });
+        targetBtn.classList.add('active');
+        currentFilter = catParam;
       }
-    };
-    xhr.send();
+    }
+    renderProducts(allProducts);
   }
 
   /* ── Render cards ── */
@@ -97,24 +88,31 @@
         galleryHtml += '</div>';
       }
 
+      var detailUrl = 'product.html?slug=' + product.slug;
+
       var isCompared = compareItems.indexOf(product.name) > -1;
 
       card.innerHTML =
         '<div class="product__image-wrap">' +
           (product.featured ? '<span class="badge product__badge">الأكثر مبيعاً</span>' : '') +
-          '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" class="product__main-img">' +
+          '<a href="' + detailUrl + '">' +
+            '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" class="product__main-img">' +
+          '</a>' +
           galleryHtml +
         '</div>' +
         '<div class="product__body">' +
-          '<h3>' + product.name + '</h3>' +
+          '<a href="' + detailUrl + '"><h3>' + product.name + '</h3></a>' +
           '<ul class="product__specs">' + specsHtml + '</ul>' +
           featuresHtml +
-          '<button class="compare__toggle ' + (isCompared ? 'active' : '') + '" data-name="' + product.name + '">' +
-            (isCompared ? '✅' : '📊') + ' مقارنة' +
-          '</button>' +
-          '<a href="https://wa.me/201016892956?text=' + encodeURIComponent('أهلاً، أستفسر عن سعر ' + product.name) + '" target="_blank" class="btn btn--primary btn--sm">' +
-            '<i class="fab fa-whatsapp"></i> استعلم عن السعر' +
-          '</a>' +
+          '<div class="product__card-actions">' +
+            '<a href="' + detailUrl + '" class="btn btn--outline btn--sm"><i class="fas fa-info-circle"></i> التفاصيل</a>' +
+            '<button class="compare__toggle ' + (isCompared ? 'active' : '') + '" data-name="' + product.name + '">' +
+              (isCompared ? '✅' : '📊') + ' مقارنة' +
+            '</button>' +
+            '<a href="https://wa.me/201016892956?text=' + encodeURIComponent('أهلاً، أستفسر عن سعر ' + product.name) + '" target="_blank" class="btn btn--primary btn--sm">' +
+              '<i class="fab fa-whatsapp"></i> استعلم' +
+            '</a>' +
+          '</div>' +
         '</div>';
 
       grid.appendChild(card);

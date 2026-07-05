@@ -88,24 +88,31 @@
         galleryHtml += '</div>';
       }
 
+      var detailUrl = 'product.html?slug=' + product.slug;
+
       var isCompared = compareItems.indexOf(product.name) > -1;
 
       card.innerHTML =
         '<div class="product__image-wrap">' +
           (product.featured ? '<span class="badge product__badge">الأكثر مبيعاً</span>' : '') +
-          '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" class="product__main-img">' +
+          '<a href="' + detailUrl + '">' +
+            '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" class="product__main-img">' +
+          '</a>' +
           galleryHtml +
         '</div>' +
         '<div class="product__body">' +
-          '<h3>' + product.name + '</h3>' +
+          '<a href="' + detailUrl + '"><h3>' + product.name + '</h3></a>' +
           '<ul class="product__specs">' + specsHtml + '</ul>' +
           featuresHtml +
-          '<button class="compare__toggle ' + (isCompared ? 'active' : '') + '" data-name="' + product.name + '">' +
-            (isCompared ? '✅' : '📊') + ' مقارنة' +
-          '</button>' +
-          '<a href="https://wa.me/201016892956?text=' + encodeURIComponent('أهلاً، أستفسر عن سعر ' + product.name) + '" target="_blank" class="btn btn--primary btn--sm">' +
-            '<i class="fab fa-whatsapp"></i> استعلم عن السعر' +
-          '</a>' +
+          '<div class="product__card-actions">' +
+            '<a href="' + detailUrl + '" class="btn btn--outline btn--sm"><i class="fas fa-info-circle"></i> التفاصيل</a>' +
+            '<button class="compare__toggle ' + (isCompared ? 'active' : '') + '" data-name="' + product.name + '">' +
+              (isCompared ? '✅' : '📊') + ' مقارنة' +
+            '</button>' +
+            '<a href="https://wa.me/201016892956?text=' + encodeURIComponent('أهلاً، أستفسر عن سعر ' + product.name) + '" target="_blank" class="btn btn--primary btn--sm">' +
+              '<i class="fab fa-whatsapp"></i> استعلم' +
+            '</a>' +
+          '</div>' +
         '</div>';
 
       grid.appendChild(card);
