@@ -191,6 +191,14 @@
     errorEl.style.display = 'block';
   }
 
+  /* ── Normalize product (API or static) ── */
+  function normalizeProduct(p) {
+    // API returns video_url, static data has video
+    if (p.video_url && !p.video) p.video = p.video_url;
+    if (p.video && !p.video_url) p.video_url = p.video;
+    return p;
+  }
+
   /* ── Init ── */
   function init() {
     var slug = getSlug();
@@ -199,33 +207,53 @@
       return;
     }
 
-    var product = findProduct(slug);
-    if (!product) {
-      showError('عذراً، المنتج المطلوب غير موجود أو تمت إزالته.');
-      return;
-    }
-
-    renderProduct(product);
+    // Try API first (has live data including video_url from admin)
+    fetch('/api/products/' + slug)
+      .then(function(r) { return r.ok ? r.json() : null })
+      .then(function(product) {
+        if (product) {
+          renderProduct(normalizeProduct(product));
+        } else {
+          // API failed — fall back to static data
+          var staticProduct = findProduct(slug);
+          if (staticProduct) {
+            renderProduct(normalizeProduct(staticProduct));
+          } else {
+            showError('عذراً، المنتج المطلوب غير موجود أو تمت إزالته.');
+          }
+        }
+      })
+      .catch(function() {
+        // Network error — fall back to static data
+        var staticProduct = findProduct(slug);
+        if (staticProduct) {
+          renderProduct(normalizeProduct(staticProduct));
+        } else {
+          showError('تعذر تحميل بيانات المنتج.');
+        }
+      });
   }
 
-  // Wait for data to be ready
-  if (typeof STATIC_PRODUCTS !== 'undefined') {
-    init();
-  } else {
-    // Data not loaded yet — wait a tick
-    var checkInterval = setInterval(function () {
-      if (typeof STATIC_PRODUCTS !== 'undefined') {
+  // Wait for static data to be ready, then init (which fetches API)
+  function waitForData() {
+    if (typeof STATIC_PRODUCTS !== 'undefined') {
+      init();
+    } else {
+      var checkInterval = setInterval(function () {
+        if (typeof STATIC_PRODUCTS !== 'undefined') {
+          clearInterval(checkInterval);
+          init();
+        }
+      }, 50);
+      setTimeout(function () {
         clearInterval(checkInterval);
-        init();
-      }
-    }, 50);
-    // Timeout after 5s
-    setTimeout(function () {
-      clearInterval(checkInterval);
-      if (!detailEl.style.display || detailEl.style.display === 'none') {
-        showError('تعذر تحميل بيانات المنتج. يرجى المحاولة مرة أخرى.');
-      }
-    }, 5000);
+        if (!detailEl.style.display || detailEl.style.display === 'none') {
+          showError('تعذر تحميل بيانات المنتج. يرجى المحاولة مرة أخرى.');
+        }
+      }, 5000);
+    }
   }
+
+  waitForData();
 
 })();
