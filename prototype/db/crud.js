@@ -4,9 +4,9 @@ const { enrichProduct } = require('./queries');
 async function addProduct(data) {
   const slug = data.slug || data.name_ar.replace(/\s+/g, '-').toLowerCase();
   const { rows } = await query(
-    `INSERT INTO products (category_slug, name_ar, slug, featured, image, sort_order)
-     VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-    [data.category_slug, data.name_ar, slug, data.featured ? 1 : 0, data.image || '', data.sort_order || 0]
+    `INSERT INTO products (category_slug, name_ar, slug, featured, image, video_url, sort_order)
+     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+    [data.category_slug, data.name_ar, slug, data.featured ? 1 : 0, data.image || '', data.video_url || '', data.sort_order || 0]
   );
   const pid = rows[0].id;
 
@@ -33,8 +33,8 @@ async function updateProduct(id, data) {
   if (existing.length === 0) return null;
 
   await query(
-    `UPDATE products SET category_slug = $1, name_ar = $2, featured = $3, image = $4, sort_order = $5 WHERE id = $6`,
-    [data.category_slug, data.name_ar, data.featured ? 1 : 0, data.image || '', data.sort_order || 0, id]
+    `UPDATE products SET category_slug = $1, name_ar = $2, featured = $3, image = $4, video_url = $5, sort_order = $6 WHERE id = $7`,
+    [data.category_slug, data.name_ar, data.featured ? 1 : 0, data.image || '', data.video_url || '', data.sort_order || 0, id]
   );
 
   if (data.specs && typeof data.specs === 'object') {

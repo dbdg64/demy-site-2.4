@@ -90,6 +90,7 @@ async function enrichProduct(row) {
     category: row.category,
     featured: row.featured === 1 || row.featured === true,
     image: row.image ? row.image.replace(/^\.\.\//, '/') : '',
+    video_url: row.video_url || '',
     slug: row.slug,
     specs: specsObj,
     features: featuresRes.rows.length > 0 ? featuresRes.rows.map(f => f.feature_ar) : null,

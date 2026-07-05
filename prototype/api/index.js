@@ -2,11 +2,37 @@ const express = require('express');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
+const multer = require('multer');
+const crypto = require('crypto');
+const fs = require('fs');
 const { initDb } = require('../db/init');
 const queries = require('../db/queries');
 const auth = require('../db/auth');
 const crud = require('../db/crud');
 const media = require('../db/media');
+
+// ── File upload config ──
+const uploadsDir = path.resolve(__dirname, '..', 'public', 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadsDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname) || '.bin';
+    const name = crypto.randomBytes(12).toString('hex') + ext;
+    cb(null, name);
+  },
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
+  fileFilter: (_req, file, cb) => {
+    const allowed = /jpeg|jpg|png|webp|gif|mp4|webm|mov|avi/;
+    const extOk = allowed.test(path.extname(file.originalname).toLowerCase());
+    const mimeOk = allowed.test((file.mimetype || '').split('/')[1]);
+    cb(null, extOk || mimeOk);
+  },
+});
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -242,6 +268,69 @@ app.delete('/api/products/:id', authMiddleware, async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.error('[PRODUCTS] delete error:', err);
+    res.status(500).json({ error: 'حدث خطأ في الخادم' });
+  }
+});
+
+/* ═══ FILE UPLOAD ═══ */
+app.post('/api/upload', authMiddleware, upload.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'لم يتم رفع ملف' });
+  const url = '/uploads/' + req.file.filename;
+  res.json({ url, filename: req.file.filename, size: req.file.size, mimetype: req.file.mimetype });
+});
+
+app.post('/api/upload/multiple', authMiddleware, upload.array('files', 10), (req, res) => {
+  if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'لم يتم رفع ملفات' });
+  const files = req.files.map(f => ({
+    url: '/uploads/' + f.filename,
+    filename: f.filename,
+    size: f.size,
+    mimetype: f.mimetype,
+  }));
+  res.json({ files });
+});
+
+/* ═══ PRODUCT IMAGES ═══ */
+app.get('/api/products/:id/images', async (req, res) => {
+  try {
+    const pid = Number(req.params.id);
+    const { rows } = await require('../db/pool').query(
+      'SELECT id, path FROM product_images WHERE product_id = $1 ORDER BY sort_order', [pid]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error('[PRODUCT IMAGES] list error:', err);
+    res.status(500).json({ error: 'حدث خطأ في الخادم' });
+  }
+});
+
+app.post('/api/products/:id/images', authMiddleware, async (req, res) => {
+  try {
+    const pid = Number(req.params.id);
+    const { path: imgPath } = req.body;
+    if (!imgPath) return res.status(400).json({ error: 'المسار مطلوب' });
+    const { rows } = await require('../db/pool').query(
+      'INSERT INTO product_images (product_id, path, sort_order) VALUES ($1, $2, $3) RETURNING id',
+      [pid, imgPath, 0]
+    );
+    res.status(201).json({ id: rows[0].id, path: imgPath });
+  } catch (err) {
+    console.error('[PRODUCT IMAGES] add error:', err);
+    res.status(500).json({ error: 'حدث خطأ في الخادم' });
+  }
+});
+
+app.delete('/api/products/:id/images/:imgId', authMiddleware, async (req, res) => {
+  try {
+    const pid = Number(req.params.id);
+    const imgId = Number(req.params.imgId);
+    const { rowCount } = await require('../db/pool').query(
+      'DELETE FROM product_images WHERE id = $1 AND product_id = $2', [imgId, pid]
+    );
+    if (rowCount === 0) return res.status(404).json({ error: 'not found' });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[PRODUCT IMAGES] delete error:', err);
     res.status(500).json({ error: 'حدث خطأ في الخادم' });
   }
 });

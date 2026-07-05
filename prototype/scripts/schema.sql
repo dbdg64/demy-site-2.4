@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS products (
   slug TEXT UNIQUE NOT NULL,
   featured INTEGER DEFAULT 0,
   image TEXT,
+  video_url TEXT,
   sort_order INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT NOW()
 );

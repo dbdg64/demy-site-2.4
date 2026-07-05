@@ -3,6 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../components/AuthContext'
 import { useToast } from '../components/ToastContext'
 
+async function uploadFile(api, file) {
+  const form = new FormData()
+  form.append('file', file)
+  const res = await api('/api/upload', { method: 'POST', body: form })
+  if (!res.ok) throw new Error('upload failed')
+  return res.json()
+}
+
 export default function ProductAdd() {
   const navigate = useNavigate()
   const { api } = useAuth()
@@ -12,6 +20,63 @@ export default function ProductAdd() {
   const [description, setDescription] = useState('')
   const [specsText, setSpecsText] = useState('')
   const [saving, setSaving] = useState(false)
+
+  /* ── Media state ── */
+  const [mainImage, setMainImage] = useState(null)         // File object
+  const [mainPreview, setMainPreview] = useState('')       // data URI
+  const [extraImages, setExtraImages] = useState([])       // File[]
+  const [extraPreviews, setExtraPreviews] = useState([])   // data URI[]
+  const [video, setVideo] = useState(null)                 // File object
+  const [uploading, setUploading] = useState(false)
+
+  /* ── File handlers ── */
+  function onMainImage(e) {
+    const f = e.target.files[0]
+    if (!f) return
+    setMainImage(f)
+    setMainPreview(URL.createObjectURL(f))
+  }
+
+  function onExtraImages(e) {
+    const files = Array.from(e.target.files)
+    setExtraImages(prev => [...prev, ...files])
+    const urls = files.map(f => URL.createObjectURL(f))
+    setExtraPreviews(prev => [...prev, ...urls])
+  }
+
+  function removeExtraImage(idx) {
+    setExtraImages(prev => prev.filter((_, i) => i !== idx))
+    setExtraPreviews(prev => prev.filter((_, i) => i !== idx))
+  }
+
+  function onVideo(e) {
+    const f = e.target.files[0]
+    if (!f) return
+    setVideo(f)
+  }
+
+  async function uploadAll() {
+    const urls = { main: '', extras: [], video: '' }
+
+    if (mainImage) {
+      const d = await uploadFile(api, mainImage)
+      urls.main = d.url
+    }
+    if (video) {
+      const d = await uploadFile(api, video)
+      urls.video = d.url
+    }
+    if (extraImages.length > 0) {
+      const form = new FormData()
+      extraImages.forEach(f => form.append('files', f))
+      const res = await api('/api/upload/multiple', { method: 'POST', body: form })
+      if (res.ok) {
+        const d = await res.json()
+        urls.extras = d.files.map(f => f.url)
+      }
+    }
+    return urls
+  }
 
   function parseSpecs(text) {
     const specs = {}
@@ -26,40 +91,58 @@ export default function ProductAdd() {
     return specs
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     if (!name || !category) {
       showToast('يرجى ملء جميع الحقول المطلوبة', 'error'); return
     }
     setSaving(true)
 
-    const body = {
-      name_ar: name,
-      category_slug: category,
-      slug: name.replace(/\s+/g, '-'),
-      featured: false,
-      sort_order: 99,
-    }
+    try {
+      /* 1. Upload files first */
+      setUploading(true)
+      const urls = await uploadAll()
+      setUploading(false)
 
-    const specs = parseSpecs(specsText)
-    if (Object.keys(specs).length > 0) body.specs = specs
-    if (description.trim()) body.description = description.trim()
+      /* 2. Create product with media URLs */
+      const body = {
+        name_ar: name,
+        category_slug: category,
+        slug: name.replace(/\s+/g, '-'),
+        featured: false,
+        sort_order: 99,
+        image: urls.main,
+        video_url: urls.video,
+      }
 
-    api('/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    }).then(r => {
+      const specs = parseSpecs(specsText)
+      if (Object.keys(specs).length > 0) body.specs = specs
+      if (description.trim()) body.description = description.trim()
+
+      const r = await api('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
       if (!r.ok) throw new Error()
-      return r.json()
-    }).then(() => {
+      const product = await r.json()
+
+      /* 3. Add extra images */
+      for (const url of urls.extras) {
+        await api(`/api/products/${product.id}/images`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: url }),
+        })
+      }
+
       showToast('✅ تم إضافة المنتج بنجاح')
-      setName(''); setCategory(''); setDescription(''); setSpecsText('')
-      setSaving(false)
-    }).catch(() => {
+      navigate('/products')
+    } catch (err) {
+      console.error(err)
       showToast('فشل الإضافة', 'error')
       setSaving(false)
-    })
+    }
   }
 
   return (
@@ -91,6 +174,49 @@ export default function ProductAdd() {
           </div>
         </section>
 
+        {/* ── Media section ── */}
+        <section className="card" style={{marginBottom:20}}>
+          <div className="card-header"><h3>الصور والفيديو</h3></div>
+          <div className="card-body">
+            <div className="form-grid">
+              {/* Main image */}
+              <div className="form-group">
+                <label>الصورة الرئيسية</label>
+                <input type="file" accept="image/*" onChange={onMainImage} />
+                {mainPreview && (
+                  <div style={{marginTop:8,position:'relative',display:'inline-block'}}>
+                    <img src={mainPreview} alt="main" style={{width:160,height:120,objectFit:'cover',borderRadius:6,border:'1px solid var(--border)'}} />
+                  </div>
+                )}
+              </div>
+
+              {/* Video */}
+              <div className="form-group">
+                <label>فيديو المنتج</label>
+                <input type="file" accept="video/*" onChange={onVideo} />
+                {video && <p style={{marginTop:4,fontSize:12,color:'var(--text-secondary)'}}>✅ {video.name}</p>}
+              </div>
+            </div>
+
+            {/* Extra images */}
+            <div className="form-group" style={{marginTop:16}}>
+              <label>صور إضافية (يمكن اختيار أكثر من صورة)</label>
+              <input type="file" accept="image/*" multiple onChange={onExtraImages} />
+              {extraPreviews.length > 0 && (
+                <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:8}}>
+                  {extraPreviews.map((url, i) => (
+                    <div key={i} style={{position:'relative'}}>
+                      <img src={url} alt={`extra ${i}`} style={{width:100,height:80,objectFit:'cover',borderRadius:6,border:'1px solid var(--border)'}} />
+                      <button type="button" onClick={() => removeExtraImage(i)}
+                        style={{position:'absolute',top:-6,right:-6,width:20,height:20,borderRadius:'50%',border:'none',background:'#ef4444',color:'#fff',fontSize:12,cursor:'pointer',lineHeight:'20px',textAlign:'center',padding:0}}>×</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
         <section className="card" style={{marginBottom:20}}>
           <div className="card-header"><h3>المواصفات (للمقارنة)</h3></div>
           <div className="card-body">
@@ -113,8 +239,8 @@ export default function ProductAdd() {
           <div className="card-body">
             <div className="form-actions" style={{border:'none',margin:0,padding:0,display:'flex',justifyContent:'flex-end',gap:12}}>
               <button type="button" className="btn btn-secondary" onClick={() => navigate('/products')}>إلغاء</button>
-              <button type="submit" className="btn btn-primary" disabled={saving}>
-                {saving ? 'جاري الحفظ…' : 'حفظ المنتج'}
+              <button type="submit" className="btn btn-primary" disabled={saving || uploading}>
+                {uploading ? 'جاري رفع الملفات…' : saving ? 'جاري الحفظ…' : 'حفظ المنتج'}
               </button>
             </div>
           </div>

@@ -44,7 +44,13 @@ export function AuthProvider({ children }) {
   function api(path, options = {}) {
     const headers = { ...(options.headers || {}) }
     if (token) headers['x-auth'] = token
-    if (!headers['Content-Type'] && options.body) headers['Content-Type'] = 'application/json'
+    // Don't force JSON Content-Type for FormData (browser sets it with boundary)
+    const isFormData = options.body instanceof FormData
+    if (!headers['Content-Type'] && options.body && !isFormData) {
+      headers['Content-Type'] = 'application/json'
+    }
+    // Remove Content-Type for FormData to let browser set multipart boundary
+    if (isFormData) delete headers['Content-Type']
     return fetch(path, { ...options, headers })
   }
 
