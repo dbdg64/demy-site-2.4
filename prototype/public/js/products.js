@@ -92,14 +92,16 @@
 
       var isCompared = compareItems.indexOf(product.name) > -1;
 
+      card.dataset.slug = product.slug;
+
       card.innerHTML =
-        '<div class="product__image-wrap" data-slug="' + product.slug + '">' +
+        '<div class="product__image-wrap">' +
           (product.featured ? '<span class="badge product__badge">الأكثر مبيعاً</span>' : '') +
-          '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" class="product__main-img" data-detail-link>' +
+          '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" class="product__main-img">' +
           galleryHtml +
         '</div>' +
         '<div class="product__body">' +
-          '<h3><a href="' + detailUrl + '">' + product.name + '</a></h3>' +
+          '<h3>' + product.name + '</h3>' +
           '<ul class="product__specs">' + specsHtml + '</ul>' +
           featuresHtml +
           '<div class="product__card-actions">' +
@@ -273,16 +275,18 @@
     });
   }
 
-  /* Product image click → navigate to detail page (delegated) */
+  /* Card click → navigate to detail (unless clicking an interactive element) */
   document.addEventListener('click', function(e) {
-    var linkEl = e.target.closest('[data-detail-link]');
-    if (!linkEl) return;
-    // Don't navigate if clicking a thumbnail inside the gallery
+    var card = e.target.closest('.product__card[data-slug]');
+    if (!card) return;
+    // Let interactive elements handle themselves
     if (e.target.closest('.product__gallery')) return;
-    var wrap = linkEl.closest('.product__image-wrap');
-    if (!wrap) return;
-    var slug = wrap.dataset.slug;
-    if (slug) window.location.href = 'product.html?slug=' + slug;
+    if (e.target.closest('.compare__toggle')) return;
+    if (e.target.closest('.btn')) return;
+    if (e.target.closest('a')) return;
+    if (e.target.closest('details')) return;
+    e.preventDefault();
+    window.location.href = 'product.html?slug=' + card.dataset.slug;
   });
 
   /* Gallery thumbnail click (delegated) */
