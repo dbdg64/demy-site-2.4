@@ -10,7 +10,7 @@ async function addProduct(data) {
     const { rows } = await query(
       `INSERT INTO products (category_slug, name_ar, slug, featured, image, video_url, sort_order)
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
-      [data.category_slug, data.name_ar, slug, data.featured ? 1 : 0, data.image || '', data.video_url || '', data.sort_order || 0]
+      [data.category_slug, data.name_ar, slug, data.featured ? 1 : 0, data.image ?? '', data.video_url ?? '', data.sort_order ?? 0]
     );
     pid = rows[0].id;
   } catch (_e) {
@@ -18,7 +18,7 @@ async function addProduct(data) {
     const { rows } = await query(
       `INSERT INTO products (category_slug, name_ar, slug, featured, image, sort_order)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-      [data.category_slug, data.name_ar, slug, data.featured ? 1 : 0, data.image || '', data.sort_order || 0]
+      [data.category_slug, data.name_ar, slug, data.featured ? 1 : 0, data.image ?? '', data.sort_order ?? 0]
     );
     pid = rows[0].id;
   }
@@ -42,19 +42,32 @@ async function addProduct(data) {
 }
 
 async function updateProduct(id, data) {
-  const { rows: existing } = await query('SELECT id FROM products WHERE id = $1', [id]);
+  // Fetch existing values so we don't clobber optional fields with defaults
+  const { rows: existing } = await query(
+    'SELECT id, image, video_url, sort_order, category_slug, name_ar, featured FROM products WHERE id = $1',
+    [id]
+  );
   if (existing.length === 0) return null;
+  const cur = existing[0];
+
+  // Merge — only use incoming value when provided; otherwise preserve existing
+  const category_slug = data.category_slug ?? cur.category_slug;
+  const name_ar       = data.name_ar ?? cur.name_ar;
+  const featured      = data.featured !== undefined ? (data.featured ? 1 : 0) : cur.featured;
+  const image         = data.image ?? cur.image;
+  const video_url     = data.video_url ?? cur.video_url;
+  const sort_order    = data.sort_order ?? cur.sort_order;
 
   // Try with video_url first; fall back without it if column doesn't exist yet
   try {
     await query(
       `UPDATE products SET category_slug = $1, name_ar = $2, featured = $3, image = $4, video_url = $5, sort_order = $6 WHERE id = $7`,
-      [data.category_slug, data.name_ar, data.featured ? 1 : 0, data.image || '', data.video_url || '', data.sort_order || 0, id]
+      [category_slug, name_ar, featured, image, video_url, sort_order, id]
     );
   } catch (_e) {
     await query(
       `UPDATE products SET category_slug = $1, name_ar = $2, featured = $3, image = $4, sort_order = $5 WHERE id = $6`,
-      [data.category_slug, data.name_ar, data.featured ? 1 : 0, data.image || '', data.sort_order || 0, id]
+      [category_slug, name_ar, featured, image, sort_order, id]
     );
   }
 
