@@ -109,8 +109,8 @@
             '<button class="compare__toggle ' + (isCompared ? 'active' : '') + '" data-name="' + product.name + '">' +
               (isCompared ? '✅' : '📊') + ' مقارنة' +
             '</button>' +
-            '<a href="https://wa.me/201016892956?text=' + encodeURIComponent('أهلاً، أستفسر عن سعر ' + product.name) + '" target="_blank" class="btn btn--primary btn--sm">' +
-              '<i class="fab fa-whatsapp"></i> استعلم' +
+            '<a href="' + detailUrl + '" class="btn btn--primary btn--sm">' +
+              '<i class="fas fa-arrow-left"></i> المزيد' +
             '</a>' +
           '</div>' +
         '</div>';
