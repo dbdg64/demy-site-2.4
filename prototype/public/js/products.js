@@ -26,9 +26,23 @@
   var currentFilter = 'all';
   var compareItems = [];
 
-  /* ── Fetch products from API ── */
+  /* ── Fetch products from API (live data), fall back to static ── */
   function loadProducts() {
-    allProducts = typeof STATIC_PRODUCTS !== 'undefined' ? STATIC_PRODUCTS : [];
+    var staticFallback = typeof STATIC_PRODUCTS !== 'undefined' ? STATIC_PRODUCTS : [];
+
+    fetch('/api/products')
+      .then(function(r) { return r.ok ? r.json() : null })
+      .then(function(apiProducts) {
+        allProducts = apiProducts && apiProducts.length > 0 ? apiProducts : staticFallback;
+        applyFilters();
+      })
+      .catch(function() {
+        allProducts = staticFallback;
+        applyFilters();
+      });
+  }
+
+  function applyFilters() {
     var urlParams = new URLSearchParams(window.location.search);
     var catParam = urlParams.get('cat');
     if (catParam) {
