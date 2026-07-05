@@ -131,6 +131,7 @@
   height: 220px;
   object-fit: cover;
   display: block;
+  cursor: pointer;
   transition: transform 0.4s;
 }
 
@@ -282,10 +283,6 @@
 
 .product__body h3 a:hover {
   color: var(--color-primary);
-}
-
-.product__image-wrap a {
-  display: block;
 }
 
 .product__card-actions {

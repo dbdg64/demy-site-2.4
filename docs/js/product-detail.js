@@ -38,6 +38,11 @@
   var whatsappBtn = $('whatsapp-btn');
   var ldJson = $('ld-json');
 
+  /* Video */
+  var videoHero = $('product-video-hero');
+  var videoEl = $('product-video');
+  var videoLabel = $('video-label');
+
   /* ── Get slug from URL ── */
   function getSlug() {
     var params = new URLSearchParams(window.location.search);
@@ -158,6 +163,18 @@
     // WhatsApp CTA
     var waText = 'أهلاً، أستفسر عن سعر ' + product.name;
     whatsappBtn.href = 'https://wa.me/201016892956?text=' + encodeURIComponent(waText);
+
+    // Video hero (auto-plays, above the fold)
+    if (product.video) {
+      videoEl.src = product.video;
+      videoEl.setAttribute('poster', product.image);
+      if (product.videoTitle) {
+        videoLabel.textContent = '🎬 ' + product.videoTitle;
+      }
+      videoHero.style.display = 'block';
+      // Attempt playback (browsers may require user gesture)
+      videoEl.play().catch(function() { /* autoplay blocked — user can click */ });
+    }
 
     // Update page meta
     updateMeta(product);

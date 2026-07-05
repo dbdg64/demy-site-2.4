@@ -63,8 +63,8 @@ ffmpeg -y -f lavfi -i anullsrc=r=24000:cl=mono -t 0.5 -q:a 9 "$OUTDIR/gap.mp3" 2
 # Build concat file
 rm -f "$OUTDIR/concat.txt"
 for i in 1 2 3 4 5 6; do
-  echo "file $OUTDIR/slide$i.mp3" >> "$OUTDIR/concat.txt"
-  echo "file $OUTDIR/gap.mp3" >> "$OUTDIR/concat.txt"
+  echo "file $OUTDIR/slide$i.mp3" >>"$OUTDIR/concat.txt"
+  echo "file $OUTDIR/gap.mp3" >>"$OUTDIR/concat.txt"
 done
 
 # Merge

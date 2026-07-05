@@ -93,15 +93,13 @@
       var isCompared = compareItems.indexOf(product.name) > -1;
 
       card.innerHTML =
-        '<div class="product__image-wrap">' +
+        '<div class="product__image-wrap" data-slug="' + product.slug + '">' +
           (product.featured ? '<span class="badge product__badge">الأكثر مبيعاً</span>' : '') +
-          '<a href="' + detailUrl + '">' +
-            '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" class="product__main-img">' +
-          '</a>' +
+          '<img src="' + product.image + '" alt="' + product.name + '" loading="lazy" class="product__main-img" data-detail-link>' +
           galleryHtml +
         '</div>' +
         '<div class="product__body">' +
-          '<a href="' + detailUrl + '"><h3>' + product.name + '</h3></a>' +
+          '<h3><a href="' + detailUrl + '">' + product.name + '</a></h3>' +
           '<ul class="product__specs">' + specsHtml + '</ul>' +
           featuresHtml +
           '<div class="product__card-actions">' +
@@ -274,6 +272,18 @@
       debounceTimer = setTimeout(filterProducts, 200);
     });
   }
+
+  /* Product image click → navigate to detail page (delegated) */
+  document.addEventListener('click', function(e) {
+    var linkEl = e.target.closest('[data-detail-link]');
+    if (!linkEl) return;
+    // Don't navigate if clicking a thumbnail inside the gallery
+    if (e.target.closest('.product__gallery')) return;
+    var wrap = linkEl.closest('.product__image-wrap');
+    if (!wrap) return;
+    var slug = wrap.dataset.slug;
+    if (slug) window.location.href = 'product.html?slug=' + slug;
+  });
 
   /* Gallery thumbnail click (delegated) */
   document.addEventListener('click', function(e) {
