@@ -105,7 +105,6 @@
           '<ul class="product__specs">' + specsHtml + '</ul>' +
           featuresHtml +
           '<div class="product__card-actions">' +
-            '<a href="' + detailUrl + '" class="btn btn--outline btn--sm"><i class="fas fa-info-circle"></i> التفاصيل</a>' +
             '<button class="compare__toggle ' + (isCompared ? 'active' : '') + '" data-name="' + product.name + '">' +
               (isCompared ? '✅' : '📊') + ' مقارنة' +
             '</button>' +
