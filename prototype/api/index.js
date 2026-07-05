@@ -11,20 +11,34 @@ const auth = require('../db/auth');
 const crud = require('../db/crud');
 const media = require('../db/media');
 
-// ── File upload config ──
-const uploadsDir = path.resolve(__dirname, '..', 'public', 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+// ── File upload config (lazy init — Vercel has read-only fs except /tmp) ──
+const isVercel = !!process.env.VERCEL;
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadsDir),
+const UPLOAD_DIR = isVercel
+  ? path.resolve('/tmp', 'uploads')
+  : path.resolve(__dirname, '..', 'public', 'uploads');
+
+// Try to create upload dir; fail gracefully on serverless
+let uploadDirReady = false;
+try {
+  if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  uploadDirReady = true;
+} catch (_e) {
+  console.warn('[UPLOAD] Cannot create uploads directory, using memory storage');
+}
+
+// Disk storage (when directory is writable)
+const diskStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
   filename: (_req, file, cb) => {
     const ext = path.extname(file.originalname) || '.bin';
     const name = crypto.randomBytes(12).toString('hex') + ext;
     cb(null, name);
   },
 });
+
 const upload = multer({
-  storage,
+  storage: uploadDirReady ? diskStorage : multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
   fileFilter: (_req, file, cb) => {
     const allowed = /jpeg|jpg|png|webp|gif|mp4|webm|mov|avi/;
@@ -37,7 +51,6 @@ const upload = multer({
 const app = express();
 const PORT = process.env.PORT || 3003;
 const JWT_SECRET = process.env.JWT_SECRET || 'demy-secret-key-2026';
-const isVercel = !!process.env.VERCEL;
 
 // Static files — Vercel serves from project root, Express serves from ../public/
 const publicDir = path.resolve(__dirname, '..', 'public');
@@ -272,22 +285,66 @@ app.delete('/api/products/:id', authMiddleware, async (req, res) => {
   }
 });
 
+/* ═══ Serve uploaded files (from disk or /tmp on Vercel) ═══ */
+app.use('/uploads', (req, res, next) => {
+  // If running on Vercel, /tmp/uploads is the dir — serve from there
+  const filePath = path.join(UPLOAD_DIR, req.path);
+  if (fs.existsSync(filePath)) {
+    return res.sendFile(filePath);
+  }
+  // Fall back to the public dir for pre-existing assets
+  next();
+});
+
 /* ═══ FILE UPLOAD ═══ */
 app.post('/api/upload', authMiddleware, upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'لم يتم رفع ملف' });
-  const url = '/uploads/' + req.file.filename;
-  res.json({ url, filename: req.file.filename, size: req.file.size, mimetype: req.file.mimetype });
+
+  // Memory storage fallback — save to disk if possible
+  if (req.file.buffer && uploadDirReady) {
+    const ext = path.extname(req.file.originalname) || '.bin';
+    const name = crypto.randomBytes(12).toString('hex') + ext;
+    const dest = path.join(UPLOAD_DIR, name);
+    try {
+      fs.writeFileSync(dest, req.file.buffer);
+      return res.json({ url: '/uploads/' + name, filename: name, size: req.file.size, mimetype: req.file.mimetype });
+    } catch (_e) { /* fall through to error */ }
+  }
+
+  if (req.file.filename) {
+    return res.json({ url: '/uploads/' + req.file.filename, filename: req.file.filename, size: req.file.size, mimetype: req.file.mimetype });
+  }
+
+  res.status(500).json({ error: 'تعذر حفظ الملف. يرجى تكوين وحدة تخزين سحابية (مثل Vercel Blob).' });
 });
 
 app.post('/api/upload/multiple', authMiddleware, upload.array('files', 10), (req, res) => {
   if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'لم يتم رفع ملفات' });
-  const files = req.files.map(f => ({
-    url: '/uploads/' + f.filename,
-    filename: f.filename,
-    size: f.size,
-    mimetype: f.mimetype,
-  }));
-  res.json({ files });
+
+  const results = [];
+  for (const f of req.files) {
+    let url = '';
+    let filename = '';
+
+    if (f.filename) {
+      // Disk storage
+      filename = f.filename;
+      url = '/uploads/' + f.filename;
+    } else if (f.buffer && uploadDirReady) {
+      // Memory storage — save to disk
+      const ext = path.extname(f.originalname) || '.bin';
+      filename = crypto.randomBytes(12).toString('hex') + ext;
+      const dest = path.join(UPLOAD_DIR, filename);
+      try {
+        fs.writeFileSync(dest, f.buffer);
+        url = '/uploads/' + filename;
+      } catch (_e) { /* skip failed file */ }
+    }
+
+    if (url) results.push({ url, filename, size: f.size, mimetype: f.mimetype });
+  }
+
+  res.json({ files: results });
 });
 
 /* ═══ PRODUCT IMAGES ═══ */
