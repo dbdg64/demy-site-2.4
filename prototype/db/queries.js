@@ -2,7 +2,7 @@ const { query } = require('./pool');
 
 async function getAllProducts() {
   const { rows } = await query(`
-    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.slug
+    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.video_url, p.slug
     FROM products p
     ORDER BY p.sort_order
   `);
@@ -11,7 +11,7 @@ async function getAllProducts() {
 
 async function getProductsByCategory(categorySlug) {
   const { rows } = await query(`
-    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.slug
+    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.video_url, p.slug
     FROM products p
     WHERE p.category_slug = $1
     ORDER BY p.sort_order
@@ -21,7 +21,7 @@ async function getProductsByCategory(categorySlug) {
 
 async function getFeaturedProducts() {
   const { rows } = await query(`
-    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.slug
+    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.video_url, p.slug
     FROM products p
     WHERE p.featured = 1
     ORDER BY p.sort_order
@@ -31,7 +31,7 @@ async function getFeaturedProducts() {
 
 async function getProductBySlug(slug) {
   const { rows } = await query(`
-    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.slug
+    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.video_url, p.slug
     FROM products p
     WHERE p.slug = $1
   `, [slug]);
@@ -42,7 +42,7 @@ async function getProductBySlug(slug) {
 async function searchProducts(searchQuery) {
   const like = '%' + searchQuery + '%';
   const { rows } = await query(`
-    SELECT DISTINCT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.slug
+    SELECT DISTINCT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.video_url, p.slug
     FROM products p
     LEFT JOIN product_specs ps ON ps.product_id = p.id
     LEFT JOIN product_features pf ON pf.product_id = p.id

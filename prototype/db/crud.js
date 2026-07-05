@@ -85,7 +85,7 @@ async function deleteProduct(id) {
 
 async function getProductById(id) {
   const { rows } = await query(`
-    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.slug
+    SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.video_url, p.slug
     FROM products p WHERE p.id = $1
   `, [id]);
   if (rows.length === 0) return null;
