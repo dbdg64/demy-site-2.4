@@ -453,6 +453,25 @@ app.get('/api/categories/:slug', async (req, res) => {
   }
 });
 
+/* ═══ SQL QUERY (admin only — for debugging DB issues) ═══ */
+app.post('/api/sql', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { query: sql, params } = req.body;
+    if (!sql || typeof sql !== 'string') return res.status(400).json({ error: 'SQL query required' });
+    // Only allow SELECT and ALTER TABLE (safety)
+    const upper = sql.trim().toUpperCase();
+    if (!upper.startsWith('SELECT') && !upper.startsWith('ALTER TABLE') && !upper.startsWith('UPDATE') && !upper.startsWith('INSERT')) {
+      return res.status(403).json({ error: 'Only SELECT, INSERT, UPDATE, ALTER TABLE allowed' });
+    }
+    const pool = require('../db/pool');
+    const result = await pool.query(sql, params || []);
+    res.json({ rows: result.rows, rowCount: result.rowCount });
+  } catch (err) {
+    console.error('[SQL] error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /* ═══ HTML Pages ═══ */
 const fileMap = {
   '/': 'index.html',
