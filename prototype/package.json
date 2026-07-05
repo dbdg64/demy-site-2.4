@@ -17,5 +17,8 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.2.0",
     "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "vercel": "^54.20.1"
   }
 }
