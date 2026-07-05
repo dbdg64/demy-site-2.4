@@ -306,6 +306,12 @@ button { font-family: inherit; }
   color: var(--color-text);
 }
 
+.navbar__logo-img {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
 .navbar__logo-icon {
   width: 32px;
   height: 32px;
