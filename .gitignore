@@ -3,6 +3,9 @@ node_modules/
 *.db-shm
 *.db-wal
 .env
+.env.local
+.env.*.local
+!.env.example
 dist/
 .DS_Store
 *.log
@@ -14,7 +17,6 @@ waterpumper-uncompleted/
 prototype/public/video/
 dashboard/dist/
 .vercel
-.env*
 .venv/
 tts_output_*.wav
 __pycache__/
