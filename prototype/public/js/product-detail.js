@@ -242,26 +242,8 @@
       });
   }
 
-  // Wait for static data to be ready, then init (which fetches API)
-  function waitForData() {
-    if (typeof STATIC_PRODUCTS !== 'undefined') {
-      init();
-    } else {
-      var checkInterval = setInterval(function () {
-        if (typeof STATIC_PRODUCTS !== 'undefined') {
-          clearInterval(checkInterval);
-          init();
-        }
-      }, 50);
-      setTimeout(function () {
-        clearInterval(checkInterval);
-        if (!detailEl.style.display || detailEl.style.display === 'none') {
-          showError('تعذر تحميل بيانات المنتج. يرجى المحاولة مرة أخرى.');
-        }
-      }, 5000);
-    }
-  }
+  // Kick off — API fetch is the primary source
+  init();
 
-  waitForData();
 
 })();
