@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../components/AuthContext'
 import { useToast } from '../components/ToastContext'
+import { apiErrorMessage } from '../utils/apiError'
 
 export default function Users() {
   const { user, api } = useAuth()
@@ -14,7 +15,7 @@ export default function Users() {
 
   function fetchUsers() {
     api('/api/users')
-      .then(r => r.json()).then(setUsers).catch(() => showToast('فشل الاتصال بالخادم', 'error'))
+      .then(r => r.json()).then(setUsers).catch(err => showToast(apiErrorMessage(err, 'فشل الاتصال بالخادم'), 'error'))
   }
 
   function handleCreate(e) {

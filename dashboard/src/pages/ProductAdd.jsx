@@ -140,7 +140,7 @@ export default function ProductAdd() {
       navigate('/products')
     } catch (err) {
       console.error(err)
-      showToast('فشل الإضافة', 'error')
+      showToast(err?.message || 'فشل الإضافة', 'error')
       setSaving(false)
     }
   }

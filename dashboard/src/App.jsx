@@ -30,29 +30,28 @@ function AppRoutes() {
       <DashboardLayout>
         <Routes>
           <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/add" element={<ProductAdd />} />
-          <Route path="/products/edit/:slug" element={<ProductEdit />} />
-          <Route path="/products/:slug" element={<ProductDetail />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/dashboard" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
+          <Route path="/products" element={<ErrorBoundary><Products /></ErrorBoundary>} />
+          <Route path="/products/add" element={<ErrorBoundary><ProductAdd /></ErrorBoundary>} />
+          <Route path="/products/edit/:slug" element={<ErrorBoundary><ProductEdit /></ErrorBoundary>} />
+          <Route path="/products/:slug" element={<ErrorBoundary><ProductDetail /></ErrorBoundary>} />
+          <Route path="/users" element={<ErrorBoundary><Users /></ErrorBoundary>} />
+          <Route path="/quiz" element={<ErrorBoundary><Quiz /></ErrorBoundary>} />
         </Routes>
       </DashboardLayout>
     </div>
   )
 }
-
 function DashboardLayout({ children }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   function navTo(path) {
     navigate(path)
   }
-
   function activeClass(path) {
-    return window.location.pathname === path ? 'active' : ''
+    return location.pathname === path ? 'active' : ''
   }
 
   return (
@@ -149,10 +148,9 @@ function DashboardLayout({ children }) {
       </div>
     </>
   )
-
   function pageTitle() {
     const titles = { '/dashboard': 'نظرة عامة', '/products': 'المنتجات', '/products/add': 'إضافة منتج', '/users': 'المستخدمين', '/quiz': 'اختار ماتورك' }
-    return titles[window.location.pathname] || ''
+    return titles[location.pathname] || ''
   }
 }
 
