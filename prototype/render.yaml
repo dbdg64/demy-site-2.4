@@ -1,4 +1,0 @@
-runtime: node
-buildCommand: npm install
-startCommand: node server.js
-healthCheckPath: /api/products

@@ -1,5 +1,5 @@
 const { query } = require('./pool');
-const { enrichProduct } = require('./queries');
+const { enrichProducts } = require('./queries');
 
 async function addProduct(data) {
   const slug = data.slug || data.name_ar.replace(/\s+/g, '-').toLowerCase();
@@ -102,7 +102,8 @@ async function getProductById(id) {
     FROM products p WHERE p.id = $1
   `, [id]);
   if (rows.length === 0) return null;
-  return await enrichProduct(rows[0]);
+  const enriched = await enrichProducts(rows);
+  return enriched[0];
 }
 
 module.exports = { addProduct, updateProduct, deleteProduct, getProductById };

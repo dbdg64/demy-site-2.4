@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useToast } from '../components/ToastContext'
+import { apiErrorMessage } from '../utils/apiError'
 
 /* Product recommendation profiles — each product scores on 4 axes */
 const PROFILES = {
@@ -33,6 +35,7 @@ const FALLBACK = {
 
 export default function Quiz() {
   const [step, setStep] = useState(1)
+  const showToast = useToast()
   const [answers, setAnswers] = useState({})
   const [products, setProducts] = useState([])
   const [recommended, setRecommended] = useState(null)
@@ -42,7 +45,7 @@ export default function Quiz() {
     fetch('/api/products')
       .then(r => r.json())
       .then(setProducts)
-      .catch(e => console.error('Quiz load error:', e))
+      .catch(e => showToast(apiErrorMessage(e, 'فشل تحميل المنتجات'), 'error'))
   }, [])
 
   function handleAnswer(question, value) {

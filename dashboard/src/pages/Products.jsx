@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../components/AuthContext'
 import { useToast } from '../components/ToastContext'
+import { apiErrorMessage } from '../utils/apiError'
 
 export default function Products() {
   const navigate = useNavigate()
@@ -17,7 +18,7 @@ export default function Products() {
     api('/api/products')
       .then(r => r.json())
       .then(data => { setProducts(data); setFiltered(data) })
-      .catch(() => showToast('فشل الاتصال بالخادم', 'error'))
+      .catch(err => showToast(apiErrorMessage(err, 'فشل الاتصال بالخادم'), 'error'))
   }, [])
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function Products() {
         }
       })
       .then(data => { if (data) { setProducts(data); setFiltered(data) } })
-      .catch(() => showToast('فشل الاتصال بالخادم', 'error'))
+      .catch(err => showToast(apiErrorMessage(err, 'فشل الاتصال بالخادم'), 'error'))
   }
 
   function toggleFeatured(p) {
@@ -62,7 +63,7 @@ export default function Products() {
         setFiltered([...filtered])
         showToast(p.featured ? '⭐ تم تمييز المنتج' : 'تم إزالة التميز', 'success')
       }
-    }).catch(() => showToast('فشل التحديث', 'error'))
+    }).catch(err => showToast(apiErrorMessage(err, 'فشل التحديث'), 'error'))
   }
 
   return (

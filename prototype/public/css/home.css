@@ -304,7 +304,11 @@
   padding: 2rem 1.5rem;
   text-align: center;
   transition: all 0.3s var(--ease-smooth);
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
+
 
 .feature__card:hover {
   border-color: var(--color-primary);
@@ -331,6 +335,10 @@
   color: #fff;
 }
 
+.feature__card:hover .feature__icon svg {
+  stroke: #fff !important;
+  fill: #fff !important;
+}
 .feature__card h3 {
   font-size: 1.1rem;
   font-weight: 700;
@@ -341,6 +349,11 @@
   color: var(--color-text-secondary);
   font-size: 0.9rem;
   line-height: 1.6;
+}
+
+.feature__icon svg {
+  max-width: 100%;
+  display: block;
 }
 
 /* ── Categories grid ── */

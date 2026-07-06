@@ -3,9 +3,7 @@
    ═════════════════════════════════════════════════════════════════════ */
 
 /* ─── Google Fonts ─────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Changa:wght@300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;500;600;700;800&display=swap');
 
 /* ─── Design Tokens ────────────────────────────────────────────────── */
 :root {
@@ -28,10 +26,10 @@
   --warning-text: #b45309;     /* warning text (dark amber) */
   --white: #ffffff;       /* for text on dark backgrounds */
 
-  /* Type — Changa display · Cairo body · IBM Plex mono */
-  --font-display: 'Changa', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-  --font-body:    'Cairo', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-  --font-mono:    'IBM Plex Sans Arabic', 'Cairo', monospace;
+  /* Type — Almarai unified */
+  --font-display: 'Almarai', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-body:    'Almarai', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-mono:    'Almarai', 'Cairo', monospace;
 
   /* Scale — fluid for responsive */
   --fs-h1: clamp(28px, 3.6vw, 42px);

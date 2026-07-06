@@ -47,7 +47,7 @@ export default function ProductEdit() {
         }
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(err => { console.error(err); setLoading(false) })
   }, [slug])
 
   function parseSpecs(text) {
@@ -157,7 +157,7 @@ export default function ProductEdit() {
       }
     } catch (err) {
       console.error(err)
-      showToast('فشل التحديث', 'error')
+      showToast(err?.message || 'فشل التحديث', 'error')
     }
     setSaving(false)
   }

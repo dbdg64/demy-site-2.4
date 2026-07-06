@@ -14,8 +14,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/products.css" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://demy-site-2-4.vercel.app/products" />
+  <meta property="og:url" content="https://demy-site-2-4.vercel.app/products" />
+  <meta property="og:image:width" content="600" />
+  <meta property="og:image:height" content="600" />
+  <meta property="og:site_name" content="ديمى لمواتير المياه" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="المنتجات — ديمى لمواتير المياه" />
+  <meta name="twitter:description" content="تصفح جميع منتجات ديمى من مواتير المياه والغواطس والفلوماك وقطع الغيار." />
+  <meta name="twitter:image" content="https://demy-site-2-4.vercel.app/assets/products/demy-9000-main.webp" />
+  <link rel="manifest" href="/manifest.json" />
+  <script defer src="/structured-data.js"></script>
+  <script defer src="/analytics.js"></script>
 </head>
 <body>
+<a href="#main-content" class="skip-link">تخطى إلى المحتوى الرئيسي</a>
+
 
   <nav class="navbar">
     <div class="navbar__container">
@@ -35,7 +50,7 @@
     </div>
   </nav>
 
-  <main>
+  <main id="main-content">
     <div class="page-header">
       <h1>🛒 جميع المنتجات</h1>
       <p>تشكيلة واسعة من مواتير المياه المستوردة بقدرات مختلفة</p>
@@ -47,15 +62,15 @@
         <!-- Controls: filter + search -->
         <div class="products__controls reveal">
           <div class="products__filters" id="filter-bar">
-            <button class="filter__btn active" data-filter="all">الكل <span class="filter__count" id="count-all"></span></button>
-            <button class="filter__btn" data-filter="motor">مواتير مياه <span class="filter__count" id="count-motor"></span></button>
-            <button class="filter__btn" data-filter="submersible">غواطس <span class="filter__count" id="count-submersible"></span></button>
-            <button class="filter__btn" data-filter="flomax">فلوماك <span class="filter__count" id="count-flomax"></span></button>
-            <button class="filter__btn" data-filter="spare">قطع غيار <span class="filter__count" id="count-spare"></span></button>
+            <button class="filter__btn active" data-filter="all" aria-label="تصفية: الكل">الكل <span class="filter__count" id="count-all"></span></button>
+            <button class="filter__btn" data-filter="motor" aria-label="تصفية: مواتير مياه">مواتير مياه <span class="filter__count" id="count-motor"></span></button>
+            <button class="filter__btn" data-filter="submersible" aria-label="تصفية: غواطس">غواطس <span class="filter__count" id="count-submersible"></span></button>
+            <button class="filter__btn" data-filter="flomax" aria-label="تصفية: فلوماك">فلوماك <span class="filter__count" id="count-flomax"></span></button>
+            <button class="filter__btn" data-filter="spare" aria-label="تصفية: قطع غيار">قطع غيار <span class="filter__count" id="count-spare"></span></button>
           </div>
           <div class="products__search">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search__icon"><path fill="currentColor" d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"/></svg>
-            <input type="text" id="product-search" class="search__input" placeholder="ابحث عن منتج... (الاسم، القوة، المواصفات)">
+            <input type="text" id="product-search" class="search__input" placeholder="ابحث عن منتج... (الاسم، القوة، المواصفات)" aria-label="بحث عن المنتجات">
           </div>
         </div>
 
@@ -63,7 +78,7 @@
         <div class="compare__panel" id="compare-panel">
           <div class="compare__header">
             <span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" style="vertical-align:middle;margin-left:4px"><path fill="currentColor" d="M10 23v-2H5q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h5V1h2v22zm-5-5h5v-6zm9 3v-9l5 6V5h-5V3h5q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21z"/></svg> مقارنة المنتجات</span>
-            <button id="compare-clear" class="compare__clear"><i class="fas fa-times"></i> إلغاء</button>
+            <button id="compare-clear" class="compare__clear"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> إلغاء</button>
           </div>
           <div id="compare-list"></div>
         </div>
@@ -105,5 +120,16 @@
   <script src="/data.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/products.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').then(function (reg) {
+          console.log('SW registered:', reg.scope);
+        }).catch(function (err) {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
