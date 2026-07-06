@@ -6,41 +6,7 @@
 (function () {
   'use strict';
 
-  /* ── Render floating geometric particles ── */
-  var floatingContainer = document.getElementById('hero-floating');
-  if (floatingContainer) {
-    var particleCount = 18;
-    var colors = ['#292524', '#78716c', '#a8a29e', '#d97706', '#0d9488'];
-    var shapes = ['square', 'circle', 'line-h', 'line-v', 'dot'];
-    for (var i = 0; i < particleCount; i++) {
-      var particle = document.createElement('div');
-      var shape = shapes[i % shapes.length];
-      var size = 4 + Math.random() * 12;
-      particle.className = 'hero__particle' + (shape === 'circle' || shape === 'dot' ? ' hero__particle--circle' : '');
-      particle.style.setProperty('--float-dur', (14 + Math.random() * 18) + 's');
-      particle.style.setProperty('--float-delay', (Math.random() * 6) + 's');
-      particle.style.top = (Math.random() * 90) + '%';
-      particle.style.left = (Math.random() * 90) + '%';
-      particle.style.background = colors[i % colors.length];
-      particle.style.opacity = (0.05 + Math.random() * 0.15);
-
-      if (shape === 'circle' || shape === 'dot') {
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-      } else if (shape === 'square') {
-        particle.style.width = (size * 2) + 'px';
-        particle.style.height = (size * 2) + 'px';
-      } else if (shape === 'line-h') {
-        particle.style.width = (size * 4) + 'px';
-        particle.style.height = '2px';
-      } else if (shape === 'line-v') {
-        particle.style.width = '2px';
-        particle.style.height = (size * 4) + 'px';
-      }
-
-      floatingContainer.appendChild(particle);
-    }
-  }
+  /* ── Grid pattern is rendered via CSS (.hero::after) ── */
 
   /* ── Slide deck ── */
   var track = document.getElementById('deck-track');
