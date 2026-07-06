@@ -72,8 +72,7 @@ app.use(express.static(publicDir, {
     } else if (filePath.endsWith('.xml') || filePath.endsWith('.txt')) {
       res.setHeader('Cache-Control', 'public, max-age=86400');
     }
-  })
-));
+  }}));
 // Body parsing
 app.use(express.json({ limit: '5mb' }));
 
