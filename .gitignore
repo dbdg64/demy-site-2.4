@@ -18,3 +18,4 @@ dashboard/dist/
 .venv/
 tts_output_*.wav
 __pycache__/
+.omp/
