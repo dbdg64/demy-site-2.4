@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './components/AuthContext'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -8,6 +8,7 @@ import ProductEdit from './pages/ProductEdit'
 import ProductDetail from './pages/ProductDetail'
 import Users from './pages/Users'
 import Quiz from './pages/Quiz'
+import ErrorBoundary from './components/ErrorBoundary'
 
 export default function App() {
   return (

@@ -212,13 +212,17 @@ async function initDb() {
   // Seed default users
   const { rows: userCount } = await query('SELECT COUNT(*)::int as c FROM users');
   if (userCount[0].c === 0) {
-    const adminPw = bcrypt.hashSync('admin123', 10);
-    const empPw = bcrypt.hashSync('demy2026', 10);
+    const [adminPw, empPw, adminAnswer, empAnswer] = await Promise.all([
+      bcrypt.hash('admin123', 10),
+      bcrypt.hash('demy2026', 10),
+      bcrypt.hash('فاطمة'.toLowerCase().trim(), 10),
+      bcrypt.hash('أزرق'.toLowerCase().trim(), 10),
+    ]);
     await query(
       `INSERT INTO users (username, password, name, role, security_question, security_answer) VALUES
-       ('admin', $1, 'أحمد', 'مدير', 'ما هو اسم والدتك؟', 'فاطمة'),
-       ('employee', $2, 'محمد', 'موظف', 'ما هو لونك المفضل؟', 'أزرق')`,
-      [adminPw, empPw]
+       ('admin', $1, 'أحمد', 'مدير', 'ما هو اسم والدتك؟', $3),
+       ('employee', $2, 'محمد', 'موظف', 'ما هو لونك المفضل؟', $4)`,
+      [adminPw, empPw, adminAnswer, empAnswer]
     );
     console.log('✅ Default users seeded');
   }

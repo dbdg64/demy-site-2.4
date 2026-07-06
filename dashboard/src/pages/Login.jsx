@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './Login.css'
 import { useAuth } from '../components/AuthContext'
 
 export default function Login() {
@@ -77,37 +78,25 @@ export default function Login() {
     setScreen('login'); setError(''); setForgotUser(null); setResetDone(false)
   }
 
-  const inputStyle = { marginBottom: 16 }
 
   return (
-    <div style={{
-      display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center',
-      background: 'var(--bg)', padding: 20
-    }}>
-      <div style={{
-        background: 'var(--surface)', border: '1px solid var(--border)',
-        borderRadius: 'var(--radius-lg)', padding: 40, width: '100%', maxWidth: 400,
-        boxShadow: '0 8px 32px rgba(0,0,0,0.06)'
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{
-            width: 48, height: 48, background: 'var(--accent)', borderRadius: 12,
-            display: 'grid', placeItems: 'center', margin: '0 auto 12px',
-            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: 'var(--fg)'
-          }}>د</div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700, marginBottom: 4 }}>ديمى</h1>
-          <p style={{ color: 'var(--muted)', fontSize: 14 }}>نظام إدارة المنتجات — لوحة التحكم</p>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <div className="login-logo">د</div>
+          <h1 className="login-title">ديمى</h1>
+          <p className="login-subtitle">نظام إدارة المنتجات — لوحة التحكم</p>
         </div>
 
         {/* ── LOGIN SCREEN ── */}
         {screen === 'login' && (
           <form onSubmit={handleLogin}>
-            <div className="form-group" style={inputStyle}>
+            <div className="form-group login-form-group">
               <label htmlFor="username">اسم المستخدم</label>
               <input id="username" type="text" className="form-input" placeholder="اسم المستخدم"
                      value={username} onChange={e => setUsername(e.target.value)} autoFocus />
             </div>
-            <div className="form-group" style={inputStyle}>
+            <div className="form-group login-form-group">
               <label htmlFor="password">كلمة المرور</label>
               <input id="password" type="password" className="form-input" placeholder="••••••"
                      value={password} onChange={e => setPassword(e.target.value)} />
@@ -116,14 +105,12 @@ export default function Login() {
             {error && <ErrorBox msg={error} />}
             {resetDone && <SuccessBox msg="تم reset" />}
 
-            <button type="submit" className="btn btn-primary" disabled={loading}
-                    style={{ width: '100%', padding: 12, fontSize: 15, justifyContent: 'center' }}>
+            <button type="submit" className="btn btn-primary login-btn-full" disabled={loading}>
               {loading ? 'جاري تسجيل الدخول…' : 'تسجيل الدخول'}
             </button>
 
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <button type="button" onClick={() => { setScreen('forgot'); setError('') }}
-                      style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+            <div className="login-link-wrap">
+              <button type="button" className="login-link" onClick={() => { setScreen('forgot'); setError('') }}>
                 نسيت كلمة المرور؟
               </button>
             </div>
@@ -133,10 +120,10 @@ export default function Login() {
         {/* ── FORGOT: ENTER USERNAME ── */}
         {screen === 'forgot' && (
           <form onSubmit={handleForgotSubmit}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 600, marginBottom: 8 }}>استعادة كلمة المرور</h2>
-            <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 20 }}>أدخل اسم المستخدم لاستعادة كلمة المرور</p>
+            <h2 className="login-section-title">استعادة كلمة المرور</h2>
+            <p className="login-section-desc">أدخل اسم المستخدم لاستعادة كلمة المرور</p>
 
-            <div className="form-group" style={inputStyle}>
+            <div className="form-group login-form-group">
               <label htmlFor="forgotUser">اسم المستخدم</label>
               <input id="forgotUser" type="text" className="form-input" placeholder="اسم المستخدم"
                      value={username} onChange={e => setUsername(e.target.value)} autoFocus />
@@ -144,14 +131,12 @@ export default function Login() {
 
             {error && <ErrorBox msg={error} />}
 
-            <button type="submit" className="btn btn-primary"
-                    style={{ width: '100%', padding: 12, fontSize: 15, justifyContent: 'center' }}>
+            <button type="submit" className="btn btn-primary login-btn-full">
               التالي
             </button>
 
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <button type="button" onClick={backToLogin}
-                      style={{ background: 'none', border: 'none', color: 'var(--muted)', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+            <div className="login-link-wrap">
+              <button type="button" className="login-link-muted" onClick={backToLogin}>
                 ← العودة لتسجيل الدخول
               </button>
             </div>
@@ -161,13 +146,11 @@ export default function Login() {
         {/* ── FORGOT: ANSWER SECURITY QUESTION ── */}
         {screen === 'answer' && forgotUser && (
           <form onSubmit={handleAnswerSubmit}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 600, marginBottom: 8 }}>سؤال الأمان</h2>
+            <h2 className="login-section-title">سؤال الأمان</h2>
             <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 8 }}>المستخدم: <strong>{forgotUser.name}</strong></p>
-            <p style={{ color: 'var(--fg)', fontSize: 15, marginBottom: 20, padding: '12px 16px', background: 'var(--bg-warm)', borderRadius: 'var(--radius)' }}>
-              {forgotUser.securityQuestion}
-            </p>
+            <p className="login-question-box">{forgotUser.securityQuestion}</p>
 
-            <div className="form-group" style={inputStyle}>
+            <div className="form-group login-form-group">
               <label htmlFor="securityAnswer">الإجابة</label>
               <input id="securityAnswer" type="text" className="form-input" placeholder="أكتب إجابتك"
                      value={securityAnswer} onChange={e => setSecurityAnswer(e.target.value)} autoFocus />
@@ -175,14 +158,12 @@ export default function Login() {
 
             {error && <ErrorBox msg={error} />}
 
-            <button type="submit" className="btn btn-primary"
-                    style={{ width: '100%', padding: 12, fontSize: 15, justifyContent: 'center' }}>
+            <button type="submit" className="btn btn-primary login-btn-full">
               تحقق
             </button>
 
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <button type="button" onClick={backToLogin}
-                      style={{ background: 'none', border: 'none', color: 'var(--muted)', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+            <div className="login-link-wrap">
+              <button type="button" className="login-link-muted" onClick={backToLogin}>
                 ← العودة لتسجيل الدخول
               </button>
             </div>
@@ -192,12 +173,10 @@ export default function Login() {
         {/* ── FORGOT: RESET PASSWORD ── */}
         {screen === 'reset' && (
           <form onSubmit={handleResetSubmit}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 600, marginBottom: 8 }}>إعادة تعيين كلمة المرور</h2>
-            <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 20 }}>
-              أدخل كلمة مرور جديدة لـ <strong>{forgotUser?.name}</strong>
-            </p>
+            <h2 className="login-section-title">إعادة تعيين كلمة المرور</h2>
+            <p className="login-section-desc">أدخل كلمة مرور جديدة لـ <strong>{forgotUser?.name}</strong></p>
 
-            <div className="form-group" style={inputStyle}>
+            <div className="form-group login-form-group">
               <label htmlFor="newPass">كلمة المرور الجديدة</label>
               <input id="newPass" type="password" className="form-input" placeholder="•••••• (٤ أحرف على الأقل)"
                      value={newPassword} onChange={e => setNewPassword(e.target.value)} autoFocus />
@@ -205,14 +184,12 @@ export default function Login() {
 
             {error && <ErrorBox msg={error} />}
 
-            <button type="submit" className="btn btn-primary"
-                    style={{ width: '100%', padding: 12, fontSize: 15, justifyContent: 'center' }}>
+            <button type="submit" className="btn btn-primary login-btn-full">
               حفظ كلمة المرور الجديدة
             </button>
 
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <button type="button" onClick={backToLogin}
-                      style={{ background: 'none', border: 'none', color: 'var(--muted)', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+            <div className="login-link-wrap">
+              <button type="button" className="login-link-muted" onClick={backToLogin}>
                 ← العودة لتسجيل الدخول
               </button>
             </div>
@@ -220,7 +197,7 @@ export default function Login() {
         )}
 
         {resetDone && (
-          <div style={{ marginTop: 16 }}>
+          <div className="login-reset-notice">
             <SuccessBox msg="✅ تم إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول." />
           </div>
         )}
@@ -230,17 +207,9 @@ export default function Login() {
 }
 
 function ErrorBox({ msg }) {
-  return <div style={{
-    background: 'color-mix(in oklch, var(--danger) 10%, transparent)',
-    color: 'var(--danger)', padding: '10px 14px', borderRadius: 'var(--radius)',
-    fontSize: 13, marginBottom: 16, textAlign: 'center'
-  }}>{msg}</div>
+  return <div className="login-error-box">{msg}</div>
 }
 
 function SuccessBox({ msg }) {
-  return <div style={{
-    background: 'color-mix(in oklch, var(--success) 10%, transparent)',
-    color: 'var(--success)', padding: '10px 14px', borderRadius: 'var(--radius)',
-    fontSize: 13, marginBottom: 16, textAlign: 'center'
-  }}>{msg}</div>
+  return <div className="login-success-box">{msg}</div>
 }

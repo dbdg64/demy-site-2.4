@@ -125,6 +125,6 @@ module.exports = {
   getFeaturedProducts,
   getProductBySlug,
   searchProducts,
-  getCategories,
   getCategoryBySlug,
+  enrichProducts,
 };

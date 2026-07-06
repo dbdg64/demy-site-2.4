@@ -32,7 +32,7 @@ async function verify() {
   // 2. All DB modules load and export correct shapes
   const queries = require('../db/queries');
   const expectedQueries = ['getAllProducts','getProductsByCategory','getFeaturedProducts',
-    'getProductBySlug','searchProducts','getCategories','getCategoryBySlug','enrichProduct'];
+    'getProductBySlug','searchProducts','getCategories','getCategoryBySlug','enrichProducts'];
   check('queries.js exports all functions', () => {
     expectedQueries.forEach(fn => assert.equal(typeof queries[fn], 'function', `missing ${fn}`));
   });
