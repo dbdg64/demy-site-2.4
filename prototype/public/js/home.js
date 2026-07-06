@@ -8,6 +8,17 @@
 
   /* ── Grid pattern is rendered via CSS (.hero::after) ── */
 
+  /* ── Subtle grid parallax on mouse move ── */
+  var heroEl = document.querySelector('.hero');
+  if (heroEl && window.matchMedia('(pointer: fine)').matches) {
+    heroEl.addEventListener('mousemove', function (e) {
+      var x = ((e.clientX / window.innerWidth) - 0.5) * 10;
+      var y = ((e.clientY / window.innerHeight) - 0.5) * 10;
+      heroEl.style.setProperty('--grid-x', x + 'px');
+      heroEl.style.setProperty('--grid-y', y + 'px');
+    });
+  }
+
   /* ── Slide deck ── */
   var track = document.getElementById('deck-track');
   var dotsContainer = document.getElementById('deck-dots');

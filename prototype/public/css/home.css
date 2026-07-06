@@ -90,34 +90,55 @@
   justify-content: center;
   margin-top: 0.5rem;
 }
-
-/* ── Floating geometric particles ── */
-.hero__floating {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
+/* ── Hero entrance animations ── */
+.hero__title {
+  animation: hero-title-in 1s cubic-bezier(0.42, 0, 0.58, 1) both;
 }
 
-.hero__particle {
-  position: absolute;
-  border-radius: 2px;
-  opacity: 0;
-  animation: particle-drift var(--float-dur, 20s) var(--ease-smooth) infinite;
-  animation-delay: var(--float-delay, 0s);
+.hero__tag {
+  animation: hero-fade-up 0.6s 0.3s ease both;
 }
 
-.hero__particle--circle {
-  border-radius: 50%;
+.hero__sub {
+  animation: hero-fade-up 0.6s 0.5s ease both;
 }
 
-@keyframes particle-drift {
-  0%   { opacity: 0; transform: translateY(60px) translateX(0) scale(0.5); }
-  15%  { opacity: 0.15; }
-  50%  { opacity: 0.08; transform: translateY(-40px) translateX(30px) scale(1); }
-  85%  { opacity: 0.12; }
-  100% { opacity: 0; transform: translateY(-80px) translateX(-20px) scale(0.3); }
+.hero__actions {
+  animation: hero-fade-up 0.6s 0.7s ease both;
+}
+
+.hero__stats {
+  animation: hero-fade-up 0.6s 0.9s ease both;
+}
+
+
+
+@keyframes hero-title-in {
+  0%   { transform: translateX(-100px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes hero-fade-up {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__title,
+  .hero__tag,
+  .hero__sub,
+  .hero__actions,
+  .hero__stats,
+  .hero__scroll-hint {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ── Grid parallax ── */
+.hero::after {
+  background-position: var(--grid-x, 0px) var(--grid-y, 0px);
+  transition: background-position 0.08s ease-out;
 }
 
 /* ── Hero stats ── */
