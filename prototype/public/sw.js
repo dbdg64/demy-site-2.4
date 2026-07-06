@@ -3,14 +3,13 @@
    Cache-First for static assets,
    Network-First for API calls.
    ════════════════════════════════════════ */
-var CACHE_NAME = 'demy-cache-v1';
+var CACHE_NAME = 'demy-cache-v2';
 
 /* Core static assets to pre-cache on install */
 var PRECACHE_URLS = [
   '/',
   '/css/style.css',
   '/js/main.js',
-  '/data.js',
   '/structured-data.js',
   '/analytics.js',
   '/manifest.json'
