@@ -59,6 +59,9 @@
     ]
   }
   </script>
+  <link rel="manifest" href="/manifest.json" />
+  <script defer src="/structured-data.js"></script>
+  <script defer src="/analytics.js"></script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">تخطى إلى المحتوى الرئيسي</a>
@@ -351,5 +354,16 @@
 
   <script src="/js/main.js"></script>
   <script src="/js/home.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').then(function (reg) {
+          console.log('SW registered:', reg.scope);
+        }).catch(function (err) {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>

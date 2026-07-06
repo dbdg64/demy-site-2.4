@@ -14,6 +14,19 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/products.css" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://demy-site-2-4.vercel.app/products" />
+  <meta property="og:url" content="https://demy-site-2-4.vercel.app/products" />
+  <meta property="og:image:width" content="600" />
+  <meta property="og:image:height" content="600" />
+  <meta property="og:site_name" content="ديمى لمواتير المياه" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="المنتجات — ديمى لمواتير المياه" />
+  <meta name="twitter:description" content="تصفح جميع منتجات ديمى من مواتير المياه والغواطس والفلوماك وقطع الغيار." />
+  <meta name="twitter:image" content="https://demy-site-2-4.vercel.app/assets/products/demy-9000-main.webp" />
+  <link rel="manifest" href="/manifest.json" />
+  <script defer src="/structured-data.js"></script>
+  <script defer src="/analytics.js"></script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">تخطى إلى المحتوى الرئيسي</a>
@@ -107,5 +120,16 @@
   <script src="/data.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/products.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').then(function (reg) {
+          console.log('SW registered:', reg.scope);
+        }).catch(function (err) {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
