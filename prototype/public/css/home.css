@@ -332,8 +332,8 @@
 }
 
 .feature__card:hover .feature__icon svg {
-  stroke: #fff;
-  fill: #fff;
+  stroke: #fff !important;
+  fill: #fff !important;
 }
 .feature__card h3 {
   font-size: 1.1rem;
