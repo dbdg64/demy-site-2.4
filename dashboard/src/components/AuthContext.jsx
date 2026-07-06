@@ -11,7 +11,20 @@ export function AuthProvider({ children }) {
     const storedUser = localStorage.getItem('demy_user')
     const storedToken = localStorage.getItem('demy_token')
     if (storedUser && storedToken) {
-      try { setUser(JSON.parse(storedUser)); setToken(storedToken) } catch {}
+      // Check token expiry client-side
+      try {
+        const payload = JSON.parse(atob(storedToken.split('.')[1]))
+        if (payload.exp && Date.now() >= payload.exp * 1000) {
+          localStorage.removeItem('demy_user')
+          localStorage.removeItem('demy_token')
+        } else {
+          setUser(JSON.parse(storedUser))
+          setToken(storedToken)
+        }
+      } catch {
+        localStorage.removeItem('demy_user')
+        localStorage.removeItem('demy_token')
+      }
     }
     setLoading(false)
   }, [])
@@ -43,7 +56,7 @@ export function AuthProvider({ children }) {
 
   function api(path, options = {}) {
     const headers = { ...(options.headers || {}) }
-    if (token) headers['x-auth'] = token
+    if (token) headers['authorization'] = `Bearer ${token}`
     // Don't force JSON Content-Type for FormData (browser sets it with boundary)
     const isFormData = options.body instanceof FormData
     if (!headers['Content-Type'] && options.body && !isFormData) {

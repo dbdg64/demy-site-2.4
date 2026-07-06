@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
 const multer = require('multer');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -49,8 +50,11 @@ const upload = multer({
 });
 
 const app = express();
-const PORT = process.env.PORT || 3003;
-const JWT_SECRET = process.env.JWT_SECRET || 'demy-secret-key-2026';
+if (!process.env.JWT_SECRET) {
+  console.error('❌ JWT_SECRET environment variable is required');
+  process.exit(1);
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Static files — Vercel serves from project root, Express serves from ../public/
 const publicDir = path.resolve(__dirname, '..', 'public');
@@ -68,11 +72,21 @@ app.use(express.static(publicDir, {
     } else if (filePath.endsWith('.xml') || filePath.endsWith('.txt')) {
       res.setHeader('Cache-Control', 'public, max-age=86400');
     }
-  }
-}));
-
+  })
+));
 // Body parsing
 app.use(express.json({ limit: '5mb' }));
+
+// Compression
+app.use(compression());
+
+// API Cache-Control: short TTL for list endpoints
+app.use('/api', (req, res, next) => {
+  if (req.method === 'GET') {
+    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=300');
+  }
+  next();
+});
 
 // Rate limiting on auth endpoints
 const authLimiter = rateLimit({
@@ -84,7 +98,8 @@ app.use('/api/auth', authLimiter);
 
 /* ═══ JWT Middleware ═══ */
 function authMiddleware(req, res, next) {
-  const token = req.headers['x-auth'];
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
   if (!token) return res.status(401).json({ error: 'غير مصرح' });
   try {
     req.user = jwt.verify(token, JWT_SECRET);
@@ -181,7 +196,7 @@ app.post('/api/auth/verify-answer', async (req, res) => {
 app.post('/api/auth/reset-password', async (req, res) => {
   try {
     const { username, newPassword } = req.body;
-    if (!newPassword || newPassword.length < 4) return res.status(400).json({ error: 'كلمة المرور قصيرة' });
+    if (!newPassword || newPassword.length < 8) return res.status(400).json({ error: 'كلمة المرور قصيرة جداً (يجب أن تكون ٨ أحرف على الأقل)' });
     const ok = await auth.resetPassword(username, newPassword);
     if (!ok) return res.status(400).json({ error: 'فشل إعادة التعيين' });
     res.json({ ok: true });
@@ -452,16 +467,14 @@ app.get('/api/categories/:slug', async (req, res) => {
     res.status(500).json({ error: 'حدث خطأ في الخادم' });
   }
 });
-
-/* ═══ SQL QUERY (admin only — for debugging DB issues) ═══ */
 app.post('/api/sql', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { query: sql, params } = req.body;
     if (!sql || typeof sql !== 'string') return res.status(400).json({ error: 'SQL query required' });
-    // Only allow SELECT and ALTER TABLE (safety)
+    // Safety: only allow SELECT queries
     const upper = sql.trim().toUpperCase();
-    if (!upper.startsWith('SELECT') && !upper.startsWith('ALTER TABLE') && !upper.startsWith('UPDATE') && !upper.startsWith('INSERT')) {
-      return res.status(403).json({ error: 'Only SELECT, INSERT, UPDATE, ALTER TABLE allowed' });
+    if (!upper.startsWith('SELECT')) {
+      return res.status(403).json({ error: 'Only SELECT queries are allowed' });
     }
     const pool = require('../db/pool');
     const result = await pool.query(sql, params || []);

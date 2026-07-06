@@ -1,0 +1,20 @@
+{
+  "name": "waterpumper-project",
+  "private": true,
+  "description": "Multi-service dashboard for managing water pumping infrastructure",
+  "scripts": {
+    "dev:prototype": "cd prototype && npm run dev",
+    "dev:dashboard": "cd dashboard && npm run dev",
+    "build:dashboard": "cd dashboard && npm run build",
+    "lint": "oxlint .",
+    "format": "prettier --check .",
+    "format:write": "prettier --write ."
+  },
+  "devDependencies": {
+    "oxlint": "^1.71.0",
+    "prettier": "^3.5.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

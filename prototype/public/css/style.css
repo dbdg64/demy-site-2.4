@@ -545,6 +545,22 @@ button { font-family: inherit; }
   box-shadow: 0 4px 16px rgba(245,158,11,0.4);
 }
 
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 10000;
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 0 0 8px 0;
+  transition: top 0.1s;
+}
+.skip-link:focus {
+  top: 0;
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

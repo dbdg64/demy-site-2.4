@@ -1,12 +1,56 @@
 const { query } = require('./pool');
 
+async function enrichProducts(rows) {
+  if (rows.length === 0) return [];
+  const ids = rows.map(r => r.id);
+
+  // Batch load all specs, features, images in 3 total queries
+  const [specsRes, featuresRes, extrasRes] = await Promise.all([
+    query('SELECT product_id, key_ar, value_ar FROM product_specs WHERE product_id = ANY($1)', [ids]),
+    query('SELECT product_id, feature_ar FROM product_features WHERE product_id = ANY($1) ORDER BY sort_order', [ids]),
+    query('SELECT product_id, path FROM product_images WHERE product_id = ANY($1) ORDER BY sort_order', [ids]),
+  ]);
+
+  // Index by product_id
+  const specsMap = {};
+  for (const s of specsRes.rows) {
+    if (!specsMap[s.product_id]) specsMap[s.product_id] = {};
+    specsMap[s.product_id][s.key_ar] = s.value_ar;
+  }
+
+  const featuresMap = {};
+  for (const f of featuresRes.rows) {
+    if (!featuresMap[f.product_id]) featuresMap[f.product_id] = [];
+    featuresMap[f.product_id].push(f.feature_ar);
+  }
+
+  const extrasMap = {};
+  for (const e of extrasRes.rows) {
+    if (!extrasMap[e.product_id]) extrasMap[e.product_id] = [];
+    extrasMap[e.product_id].push(e.path.replace(/^\.\.\//, '/'));
+  }
+
+  return rows.map(row => ({
+    id: row.id,
+    name: row.name,
+    category: row.category,
+    featured: row.featured === 1 || row.featured === true,
+    image: row.image ? row.image.replace(/^\.\.\//, '/') : '',
+    video_url: row.video_url || '',
+    slug: row.slug,
+    specs: specsMap[row.id] || {},
+    features: featuresMap[row.id] || null,
+    extras: extrasMap[row.id] || null,
+  }));
+}
+
 async function getAllProducts() {
   const { rows } = await query(`
     SELECT p.id, p.name_ar AS name, p.category_slug AS category, p.featured, p.image, p.video_url, p.slug
     FROM products p
     ORDER BY p.sort_order
   `);
-  return await Promise.all(rows.map(row => enrichProduct(row)));
+  return enrichProducts(rows);
 }
 
 async function getProductsByCategory(categorySlug) {
@@ -16,7 +60,7 @@ async function getProductsByCategory(categorySlug) {
     WHERE p.category_slug = $1
     ORDER BY p.sort_order
   `, [categorySlug]);
-  return await Promise.all(rows.map(row => enrichProduct(row)));
+  return enrichProducts(rows);
 }
 
 async function getFeaturedProducts() {
@@ -26,7 +70,7 @@ async function getFeaturedProducts() {
     WHERE p.featured = 1
     ORDER BY p.sort_order
   `);
-  return await Promise.all(rows.map(row => enrichProduct(row)));
+  return enrichProducts(rows);
 }
 
 async function getProductBySlug(slug) {
@@ -36,7 +80,8 @@ async function getProductBySlug(slug) {
     WHERE p.slug = $1
   `, [slug]);
   if (rows.length === 0) return null;
-  return await enrichProduct(rows[0]);
+  const enriched = await enrichProducts(rows);
+  return enriched[0];
 }
 
 async function searchProducts(searchQuery) {
@@ -51,7 +96,7 @@ async function searchProducts(searchQuery) {
        OR pf.feature_ar ILIKE $1
     ORDER BY p.sort_order
   `, [like]);
-  return await Promise.all(rows.map(row => enrichProduct(row)));
+  return enrichProducts(rows);
 }
 
 async function getCategories() {
@@ -74,30 +119,6 @@ async function getCategoryBySlug(slug) {
   return rows[0] || null;
 }
 
-async function enrichProduct(row) {
-  const [specsRes, featuresRes, extrasRes] = await Promise.all([
-    query('SELECT key_ar, value_ar FROM product_specs WHERE product_id = $1', [row.id]),
-    query('SELECT feature_ar FROM product_features WHERE product_id = $1 ORDER BY sort_order', [row.id]),
-    query('SELECT path FROM product_images WHERE product_id = $1 ORDER BY sort_order', [row.id])
-  ]);
-
-  const specsObj = {};
-  for (const s of specsRes.rows) specsObj[s.key_ar] = s.value_ar;
-
-  return {
-    id: row.id,
-    name: row.name,
-    category: row.category,
-    featured: row.featured === 1 || row.featured === true,
-    image: row.image ? row.image.replace(/^\.\.\//, '/') : '',
-    video_url: row.video_url || '',
-    slug: row.slug,
-    specs: specsObj,
-    features: featuresRes.rows.length > 0 ? featuresRes.rows.map(f => f.feature_ar) : null,
-    extras: extrasRes.rows.length > 0 ? extrasRes.rows.map(e => e.path.replace(/^\.\.\//, '/')) : null,
-  };
-}
-
 module.exports = {
   getAllProducts,
   getProductsByCategory,
@@ -106,5 +127,4 @@ module.exports = {
   searchProducts,
   getCategories,
   getCategoryBySlug,
-  enrichProduct,
 };
